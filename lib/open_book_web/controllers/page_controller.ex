@@ -2,6 +2,8 @@ defmodule OpenBookWeb.PageController do
   use OpenBookWeb, :controller
 
   def index(conn, _params) do
-    render(conn, "index.html")
+    conn
+    |> put_layout("hero.html")
+    |> render("index.html")
   end
 end
