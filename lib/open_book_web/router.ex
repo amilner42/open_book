@@ -28,6 +28,7 @@ defmodule OpenBookWeb.Router do
     pipe_through [:browser, :redirect_if_logged_in]
 
     get "/", PageController, :index
+    get "/login/:code", SessionController, :login_through_url_with_verification_code
   end
 
   # Logged in routes.
