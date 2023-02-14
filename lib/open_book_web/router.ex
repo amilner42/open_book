@@ -20,6 +20,12 @@ defmodule OpenBookWeb.Router do
     get "/", PageController, :index
   end
 
+  scope "/", OpenBookWeb do
+    pipe_through :browser
+
+    live("/journal", JournalLive)
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", OpenBookWeb do
   #   pipe_through :api
