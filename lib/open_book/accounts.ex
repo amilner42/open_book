@@ -1,19 +1,22 @@
 defmodule OpenBook.Accounts do
-  import Ecto.Changeset
-
   alias OpenBook.Accounts.User
   alias OpenBook.Accounts.VerificationCode
+  alias OpenBook.LittleLogger, as: LL
   alias OpenBook.Repo
 
   ## DB Mutations
 
   def insert_new_user!(params = %{display_name: _, phone: _}) do
+    LL.info_event("insert_new_user!", params)
+
     %User{}
     |> User.changeset(params)
     |> Repo.insert!()
   end
 
   def insert_new_vc!(user_id) do
+    LL.info_event("insert_new_vc!", %{user_id: user_id})
+
     VerificationCode.new_vc_changeset(user_id)
     |> Repo.insert!()
   end
