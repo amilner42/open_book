@@ -1,6 +1,14 @@
 defmodule OpenBookWeb.Router do
   use OpenBookWeb, :router
 
+  import OpenBook.Plugs.Auth,
+    only: [
+      get_current_user_from_session: 2,
+      redirect_if_logged_in: 2,
+      authenticate_user: 2,
+      redirect_to_if_not_user: 2
+    ]
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -8,20 +16,23 @@ defmodule OpenBookWeb.Router do
     plug :put_root_layout, {OpenBookWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :get_current_user_from_session
   end
 
   pipeline :api do
     plug :accepts, ["json"]
   end
 
+  # Logged out routes.
   scope "/", OpenBookWeb do
-    pipe_through :browser
+    pipe_through [:browser, :redirect_if_logged_in]
 
     get "/", PageController, :index
   end
 
+  # Logged in routes.
   scope "/", OpenBookWeb do
-    pipe_through :browser
+    pipe_through [:browser, :authenticate_user]
 
     live("/journal", JournalLive)
   end

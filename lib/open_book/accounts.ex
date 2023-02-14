@@ -1,7 +1,12 @@
 defmodule OpenBook.Accounts do
-  alias Chillko.Accounts.User
+  alias OpenBook.Accounts.User
+  alias OpenBook.Repo
 
-  def todo do
-    :todo
+  def get_user!(user_id) do
+    Repo.get!(User, user_id)
+  end
+
+  def get_user(user_id) do
+    Repo.get(User, user_id)
   end
 end
