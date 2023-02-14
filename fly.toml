@@ -9,7 +9,7 @@ processes = []
   release_command = "/app/bin/migrate"
 
 [env]
-  PHX_HOST = "openbookhealth.fly.dev"
+  PHX_HOST = "openbook.health"
   PORT = "8080"
 
 [experimental]
