@@ -32,3 +32,5 @@ open_book-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# Don't push local .env variables.
+.env
