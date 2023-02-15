@@ -36,6 +36,9 @@ defmodule OpenBookWeb.Router do
 
     live("/log", LogLive)
     live("/feed", FeedLive)
+
+    # Session Routes
+    get("/logout", SessionController, :delete)
   end
 
   # Other scopes may use custom stacks.

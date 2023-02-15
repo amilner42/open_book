@@ -11,8 +11,43 @@
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
   </head>
   <body>
-    <header>
-    </header>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+          <span class="level is-mobile pl-1">
+            <span class="level-item icon has_text_dark_blue">
+              <i class="fas fa-book-open is-size-3"></i>
+            </span>
+            <span class="level-item has_text_dark_blue has-text-weight-bold">
+              OpenBook
+            </span>
+          </span>
+        </a>
+
+        <%= if @current_user  do %>
+          <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </a>
+        <% end %>
+      </div>
+
+      <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start">
+        </div>
+
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <div class="buttons">
+              <%= if @current_user  do %>
+                <%= link "Log out", class: "button is-small", to: Routes.session_path(@conn, :delete) %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
     <%= @inner_content %>
   </body>
 </html>

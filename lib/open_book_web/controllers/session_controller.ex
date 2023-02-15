@@ -25,4 +25,8 @@ defmodule OpenBookWeb.SessionController do
         |> redirect(to: Routes.live_path(conn, LogLive))
     end
   end
+
+  def delete(conn, _) do
+    Auth.logout(conn, and_redirect_to_home_page: true)
+  end
 end
