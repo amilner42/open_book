@@ -5,8 +5,7 @@ defmodule OpenBookWeb.Router do
     only: [
       get_current_user_from_session: 2,
       redirect_if_logged_in: 2,
-      authenticate_user: 2,
-      redirect_to_if_not_user: 2
+      authenticate_user: 2
     ]
 
   pipeline :browser do
@@ -36,6 +35,7 @@ defmodule OpenBookWeb.Router do
     pipe_through [:browser, :authenticate_user]
 
     live("/journal", JournalLive)
+    live("/feed", FeedLive)
   end
 
   # Other scopes may use custom stacks.
