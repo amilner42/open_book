@@ -5,3 +5,10 @@ body {
 .has_blue_bg {
     background-color: #5cceff;
 }
+
+.new_entry_footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
