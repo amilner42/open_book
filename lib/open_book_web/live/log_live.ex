@@ -1,4 +1,4 @@
-defmodule OpenBookWeb.JournalLive do
+defmodule OpenBookWeb.LogLive do
   @moduledoc """
   The LiveView for the journal page where one enters data.
 
@@ -31,7 +31,7 @@ defmodule OpenBookWeb.JournalLive do
 
   def render(assigns) do
     ~H"""
-    Journal Page.
+    Log Page.
     """
   end
 

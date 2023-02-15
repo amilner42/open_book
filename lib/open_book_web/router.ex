@@ -9,32 +9,32 @@ defmodule OpenBookWeb.Router do
     ]
 
   pipeline :browser do
-    plug :accepts, ["html"]
-    plug :fetch_session
-    plug :fetch_live_flash
-    plug :put_root_layout, {OpenBookWeb.LayoutView, :root}
-    plug :protect_from_forgery
-    plug :put_secure_browser_headers
-    plug :get_current_user_from_session
+    plug(:accepts, ["html"])
+    plug(:fetch_session)
+    plug(:fetch_live_flash)
+    plug(:put_root_layout, {OpenBookWeb.LayoutView, :root})
+    plug(:protect_from_forgery)
+    plug(:put_secure_browser_headers)
+    plug(:get_current_user_from_session)
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug(:accepts, ["json"])
   end
 
   # Logged out routes.
   scope "/", OpenBookWeb do
-    pipe_through [:browser, :redirect_if_logged_in]
+    pipe_through([:browser, :redirect_if_logged_in])
 
-    get "/", PageController, :index
-    get "/login/:code", SessionController, :login_through_url_with_verification_code
+    get("/", PageController, :index)
+    get("/login/:code", SessionController, :login_through_url_with_verification_code)
   end
 
   # Logged in routes.
   scope "/", OpenBookWeb do
-    pipe_through [:browser, :authenticate_user]
+    pipe_through([:browser, :authenticate_user])
 
-    live("/journal", JournalLive)
+    live("/log", LogLive)
     live("/feed", FeedLive)
   end
 
@@ -54,9 +54,9 @@ defmodule OpenBookWeb.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/" do
-      pipe_through :browser
+      pipe_through(:browser)
 
-      live_dashboard "/dashboard", metrics: OpenBookWeb.Telemetry
+      live_dashboard("/dashboard", metrics: OpenBookWeb.Telemetry)
     end
   end
 
@@ -66,9 +66,9 @@ defmodule OpenBookWeb.Router do
   # node running the Phoenix server.
   if Mix.env() == :dev do
     scope "/dev" do
-      pipe_through :browser
+      pipe_through(:browser)
 
-      forward "/mailbox", Plug.Swoosh.MailboxPreview
+      forward("/mailbox", Plug.Swoosh.MailboxPreview)
     end
   end
 end
