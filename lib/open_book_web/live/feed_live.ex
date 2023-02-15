@@ -36,7 +36,7 @@ defmodule OpenBookWeb.FeedLive do
     <div class="new_entry_footer">
       <p class="buttons is-right pb-4 pr-4 are-small">
         <.link
-          navigate={Routes.live_path(OpenBookWeb.Endpoint, JournalLive)}
+          navigate={Routes.live_path(OpenBookWeb.Endpoint, JournalLive, %{kind: "nutrition"})}
           class="button is-rounded is-outlined is-link"
         >
           <span class="icon">
@@ -47,7 +47,7 @@ defmodule OpenBookWeb.FeedLive do
           </span>
         </.link>
         <.link
-          navigate={Routes.live_path(OpenBookWeb.Endpoint, JournalLive)}
+          navigate={Routes.live_path(OpenBookWeb.Endpoint, JournalLive, %{kind: "exercise"})}
           class="button is-rounded is-link"
         >
           <span class="icon">
