@@ -9,27 +9,29 @@ import Config
 
 # ## Logging
 
-config :logger,
-  level: :info,
-  backends: [LogflareLogger.HttpBackend]
+if config_env() == :prod || (config_env() == :dev && System.get_env("USE_LOGFLARE_IN_DEV") == "yes") do
+  config :logger,
+    level: :info,
+    backends: [LogflareLogger.HttpBackend]
 
-config :logflare_logger_backend,
-  # https://api.logflare.app is configured by default and you can set your own url
-  url: "https://api.logflare.app",
-  # Default LogflareLogger level is :info. Note that log messages are filtered by the :logger application first
-  level: :info,
-  # your Logflare API key, found on your dashboard
-  api_key: System.get_env("LOGFLARE_API_KEY") || raise("Missing LOGFLARE_API_KEY"),
-  # the Logflare source UUID, found  on your Logflare dashboard
-  source_id: System.get_env("LOGFLARE_SOURCE_ID") || raise("Missing LOGFLARE_SOURCE_ID"),
-  # minimum time in ms before a log batch is sent
-  flush_interval: 1_000,
-  # maximum number of events before a log batch is sent
-  max_batch_size: 50,
-  # optionally you can drop keys if they exist with `metadata: [drop: [:list, :keys, :to, :drop]]`
-  # Arie: We drop `conn` here because it returns an array of different types which causes an error with logflare.
-  #       This is included with exceptions. If it's helpful, we should modify it prior to sending it logflare.
-  metadata: [drop: [:conn]]
+  config :logflare_logger_backend,
+    # https://api.logflare.app is configured by default and you can set your own url
+    url: "https://api.logflare.app",
+    # Default LogflareLogger level is :info. Note that log messages are filtered by the :logger application first
+    level: :info,
+    # your Logflare API key, found on your dashboard
+    api_key: System.get_env("LOGFLARE_API_KEY") || raise("Missing LOGFLARE_API_KEY"),
+    # the Logflare source UUID, found  on your Logflare dashboard
+    source_id: System.get_env("LOGFLARE_SOURCE_ID") || raise("Missing LOGFLARE_SOURCE_ID"),
+    # minimum time in ms before a log batch is sent
+    flush_interval: 1_000,
+    # maximum number of events before a log batch is sent
+    max_batch_size: 50,
+    # optionally you can drop keys if they exist with `metadata: [drop: [:list, :keys, :to, :drop]]`
+    # Arie: We drop `conn` here because it returns an array of different types which causes an error with logflare.
+    #       This is included with exceptions. If it's helpful, we should modify it prior to sending it logflare.
+    metadata: [drop: [:conn]]
+end
 
 # ## Using releases
 #
