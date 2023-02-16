@@ -51,6 +51,49 @@ defmodule OpenBookWeb do
     end
   end
 
+  # Me editing phoenix to add some boilerplate around mounting / handle_params getting called twice on page load:
+  #  - on page-load (no websocket)
+  #  - on websocket connection
+  def live_view_connected do
+    quote do
+      unquote(live_view())
+
+      def mount(params, session, socket) do
+        if(Phoenix.LiveView.connected?(socket)) do
+          {:ok, socket} = mount_live(params, session, socket)
+
+          IO.puts("GOT HERE")
+
+          socket = assign(socket, :page_loading, false)
+
+          {:ok, socket}
+        else
+          mount_dead(params, session, socket)
+        end
+      end
+
+      def mount_dead(_params, _session, socket) do
+        socket =
+          socket
+          |> assign(:page_loading, true)
+
+        {:ok, socket}
+      end
+
+      def handle_params(params, url, socket) do
+        if(Phoenix.LiveView.connected?(socket)) do
+          handle_params_live(params, url, socket)
+        else
+          handle_params_dead(params, url, socket)
+        end
+      end
+
+      def handle_params_dead(_params, _url, socket) do
+        {:noreply, socket}
+      end
+    end
+  end
+
   def live_component do
     quote do
       use Phoenix.LiveComponent
