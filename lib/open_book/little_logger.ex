@@ -2,8 +2,8 @@ defmodule OpenBook.LittleLogger do
   @moduledoc """
   The wrapper around the elixir `Logger` with some logging helpers. We currently pipe our logs to Logflare.
 
-  This should be imported everywhere as such (for easy ctrl-f):
-    import OpenBook.LittleLogger, as: LL
+  This should be aliased everywhere as such (for easy ctrl-f):
+    alias OpenBook.LittleLogger, as: LL
   """
   require Logger
 

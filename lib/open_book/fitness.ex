@@ -4,6 +4,7 @@ defmodule OpenBook.Fitness do
   alias OpenBook.Fitness.ExerciseCategory
   alias OpenBook.Fitness.NutritionCategory
   alias OpenBook.LittleLogger, as: LL
+  alias OpenBook.QueryBuilders, as: QB
   alias OpenBook.Repo
 
   # DB Mutations
@@ -26,14 +27,13 @@ defmodule OpenBook.Fitness do
 
   def fetch_all_nutrition_categories() do
     from(nc in NutritionCategory)
-    |> nutrition_categories_ordered_by(asc: :created_at)
+    |> QB.ordered_by(asc: :id)
+    |> Repo.all()
   end
 
-  # Private
-
-  ## Query Builders
-
-  defp nutrition_categories_ordered_by(query, order_by) do
-    from(nc in query, order_by: ^order_by)
+  def fetch_all_exercise_categories() do
+    from(ec in ExerciseCategory)
+    |> QB.ordered_by(asc: :id)
+    |> Repo.all()
   end
 end

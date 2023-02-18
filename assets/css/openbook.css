@@ -25,3 +25,7 @@ nav.navbar {
 .has_text_dark_blue {
     color: #2f364d;
 }
+
+.has_dark_blue_border {
+    border-color: #2f364d;
+}

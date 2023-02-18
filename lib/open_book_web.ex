@@ -61,9 +61,6 @@ defmodule OpenBookWeb do
       def mount(params, session, socket) do
         if(Phoenix.LiveView.connected?(socket)) do
           {:ok, socket} = mount_live(params, session, socket)
-
-          IO.puts("GOT HERE")
-
           socket = assign(socket, :page_loading, false)
 
           {:ok, socket}
