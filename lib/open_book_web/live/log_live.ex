@@ -76,7 +76,7 @@ defmodule OpenBookWeb.LogLive do
 
     selected_nutrition_category =
       Enum.find(
-        socket.assigns[:nutrition_categories],
+        socket.assigns[:nutrition_categories] || [],
         &("#{&1.id}" == selected_nutrition_category_id)
       )
 
@@ -91,6 +91,28 @@ defmodule OpenBookWeb.LogLive do
     socket =
       socket
       |> assign(:selected_calorie_count, selected_calorie_count)
+
+    # Selected exercise category
+
+    selected_exercise_category_id = params["secid"]
+
+    selected_exercise_category =
+      Enum.find(
+        socket.assigns[:exercise_categories] || [],
+        &("#{&1.id}" == selected_exercise_category_id)
+      )
+
+    socket =
+      socket
+      |> assign(:selected_exercise_category, selected_exercise_category)
+
+    # Selected exercise measurement
+
+    selected_exercise_measurement = params["sem"]
+
+    socket =
+      socket
+      |> assign(:selected_exercise_measurement, selected_exercise_measurement)
 
     {:noreply, socket}
   end
@@ -108,17 +130,8 @@ defmodule OpenBookWeb.LogLive do
         />
         <section class="section pt-0">
         <%= cond do %>
-        <% @selected_nutrition_category && @selected_calorie_count -> %>
-          <button
-            class="button is-fullwidth is-success"
-            phx-click="confirm_add_new_nutrition_entry"
-            phx-value-selected_nutrition_category_id={@selected_nutrition_category.id}
-            phx-value-selected_calorie_count={@selected_calorie_count}
-          >
-            confirm
-          </button>
         <% !@selected_nutrition_category -> %>
-          <div class="buttons are-small">
+          <div class="buttons are-medium">
             <%= for nutrition_category <- @nutrition_categories do %>
             <button
               class="button is-fullwidth is-outlined has_dark_blue_border"
@@ -150,6 +163,15 @@ defmodule OpenBookWeb.LogLive do
             <% end %>
           </div>
 
+        <% @selected_nutrition_category && @selected_calorie_count -> %>
+          <button
+            class="button is-fullwidth is-success"
+            phx-click="confirm_add_new_nutrition_entry"
+            phx-value-selected_nutrition_category_id={@selected_nutrition_category.id}
+            phx-value-selected_calorie_count={@selected_calorie_count}
+          >
+            confirm
+          </button>
 
         <% true -> %>
           <%= nil %>
@@ -158,8 +180,52 @@ defmodule OpenBookWeb.LogLive do
         </section>
 
       <% "exercise" -> %>
-        Exercise...
+        <.exercise_title_section
+          selected_exercise_category={@selected_exercise_category}
+          selected_exercise_measurement={@selected_exercise_measurement}
+        />
+        <section class="section pt-0">
+        <%= cond do %>
+        <% !@selected_exercise_category  -> %>
+          <div class="buttons are-medium">
+          <%= for exercise_category <- @exercise_categories do %>
+            <button
+              class="button is-fullwidth is-outlined has_dark_blue_border"
+              phx-click="select_exercise_category"
+              phx-value-exercise_category_id={exercise_category.id}
+            >
+              <%= if exercise_category.icon_css_class do %>
+              <span class="icon is-small has_text_dark_blue">
+                <i class={exercise_category.icon_css_class}></i>
+              </span>
+              <% end %>
+              <span>
+              <%= exercise_category.name %>
+              </span>
+            </button>
+          <% end %>
+          </div>
 
+        <%= !@selected_exercise_measurement -> %>
+          <div class="buttons are-small">
+          <%= case @selected_exercise_category && @selected_exercise_category.measurement_kind do %>
+          <% nil -> %>
+            <%= nil %>
+
+          <% :amount -> %>
+            todo amount
+
+          <% :duration -> %>
+            todo duration
+
+          <% end %>
+          </div>
+
+        <% true -> %>
+          <%= nil %>
+
+        <% end %>
+        </section>
       <% end %>
     <% end %>
     """
@@ -185,6 +251,21 @@ defmodule OpenBookWeb.LogLive do
         socket
       ) do
     params = Map.merge(socket.assigns.params, %{sncid: nutrition_category_id})
+    to = Routes.live_path(OpenBookWeb.Endpoint, __MODULE__, params)
+
+    socket =
+      socket
+      |> push_patch(to: to, replace: false)
+
+    {:noreply, socket}
+  end
+
+  def handle_event(
+        "select_exercise_category",
+        %{"exercise_category_id" => exercise_category_id},
+        socket
+      ) do
+    params = Map.merge(socket.assigns.params, %{secid: exercise_category_id})
     to = Routes.live_path(OpenBookWeb.Endpoint, __MODULE__, params)
 
     socket =
@@ -229,6 +310,38 @@ defmodule OpenBookWeb.LogLive do
         <div class="subtitle is-6 mb-0">
           Approximately how many calories? <span class="has-text-weight-semibold"><%= @selected_calorie_count %></span>
         </div>
+        <% end %>
+      </p>
+    </section>
+    """
+  end
+
+  defp exercise_title_section(assigns) do
+    ~H"""
+    <section class="section pb-5">
+      <p>
+        <div class="title is-4">
+          Exercise Log
+        </div>
+
+        <div class="subtitle is-6 mb-0">
+          What did you do? <span class="has-text-weight-semibold"><%= @selected_exercise_category && @selected_exercise_category.name %></span>
+        </div>
+
+        <%= case @selected_exercise_category && @selected_exercise_category.measurement_kind do %>
+        <% :duration -> %>
+          <div class="subtitle is-6 mb-0">
+            Approximately how long? <span class="has-text-weight-semibold"><%= @selected_exercise_measurement %></span>
+          </div>
+
+        <% :amount -> %>
+          <div class="subtitle is-6 mb-0">
+            How many? <span class="has-text-weight-semibold">todo</span>
+          </div>
+
+        <% nil -> %>
+          <%= nil %>
+
         <% end %>
       </p>
     </section>
