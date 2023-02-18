@@ -19,7 +19,7 @@ nav.navbar {
 }
 
 .has_text_purple {
-    color: #8746e3;
+    color: #8746e3 !important;
 }
 
 .has_text_dark_blue {
@@ -28,4 +28,22 @@ nav.navbar {
 
 .has_dark_blue_border {
     border-color: #2f364d;
+}
+
+.has_background_dark_blue {
+    background-color: #2f364d !important;
+}
+
+.has_purple_border {
+    border-color: #8746e3;
+}
+
+.is_purple_button {
+    background-color: #8746e3;
+    color: white;
+    border: 0;
+}
+
+.br-0 {
+    border-radius: 0px !important;
 }

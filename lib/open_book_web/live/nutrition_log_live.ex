@@ -76,7 +76,7 @@ defmodule OpenBookWeb.NutritionLogLive do
           <div class="buttons are-medium">
             <%= for nutrition_category <- @nutrition_categories do %>
             <button
-              class="button is-fullwidth is-outlined has_dark_blue_border"
+              class="button is-light is-fullwidth"
               phx-click="select_nutrition_category"
               phx-value-nutrition_category_id={nutrition_category.id}
             >
@@ -85,7 +85,7 @@ defmodule OpenBookWeb.NutritionLogLive do
                 <i class={nutrition_category.icon_css_class}></i>
               </span>
               <% end %>
-              <span>
+              <span class="has_text_dark_blue">
                 <%= nutrition_category.name %>
               </span>
             </button>
@@ -96,23 +96,28 @@ defmodule OpenBookWeb.NutritionLogLive do
           <div class="buttons are-small">
             <%= for calorie_count <- @selected_nutrition_category.calorie_options do %>
               <button
-                class="button is-fullwidth is-outlined has_dark_blue_border"
+                class="button is-light is-fullwidth br-0"
                 phx-click="select_calorie_option"
                 phx-value-calorie_count={calorie_count}
               >
-                <span class="has_text_dark_blue">~<%= calorie_count %> calories</span>
+                <span class="">~<%= calorie_count %> calories</span>
               </button>
             <% end %>
           </div>
 
         <% @selected_nutrition_category && @selected_calorie_count -> %>
           <button
-            class="button is-fullwidth is-success"
+            class="button is-fullwidth is-dark has_background_dark_blue "
             phx-click="confirm_add_new_nutrition_entry"
             phx-value-selected_nutrition_category_id={@selected_nutrition_category.id}
             phx-value-selected_calorie_count={@selected_calorie_count}
           >
-            confirm
+            <span class="icon has-text-white">
+              <i class="fas fa-pencil-alt"></i>
+            </span>
+            <span>
+              Save
+            </span>
           </button>
 
         <% true -> %>

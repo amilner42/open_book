@@ -76,7 +76,7 @@ defmodule OpenBookWeb.ExerciseLogLive do
         <div class="buttons are-medium">
         <%= for exercise_category <- @exercise_categories do %>
           <button
-            class="button is-fullwidth is-outlined has_dark_blue_border"
+            class="button is-light is-fullwidth"
             phx-click="select_exercise_category"
             phx-value-exercise_category_id={exercise_category.id}
           >
@@ -85,8 +85,8 @@ defmodule OpenBookWeb.ExerciseLogLive do
               <i class={exercise_category.icon_css_class}></i>
             </span>
             <% end %>
-            <span>
-            <%= exercise_category.name %>
+            <span class="has_text_dark_blue">
+              <%= exercise_category.name %>
             </span>
           </button>
         <% end %>
