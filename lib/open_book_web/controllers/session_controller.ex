@@ -4,7 +4,7 @@ defmodule OpenBookWeb.SessionController do
   alias OpenBook.Accounts
   alias OpenBook.LittleLogger, as: LL
   alias OpenBook.Plugs.Auth
-  alias OpenBookWeb.LogLive
+  alias OpenBookWeb.FeedLive
 
   def login_through_url_with_verification_code(conn, %{"code" => code}) do
     LL.info_event("login_with_code", %{code: code})
@@ -22,7 +22,7 @@ defmodule OpenBookWeb.SessionController do
 
         conn
         |> Auth.login(user)
-        |> redirect(to: Routes.live_path(conn, LogLive))
+        |> redirect(to: Routes.live_path(conn, FeedLive))
     end
   end
 

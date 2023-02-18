@@ -34,7 +34,8 @@ defmodule OpenBookWeb.Router do
   scope "/", OpenBookWeb do
     pipe_through([:browser, :authenticate_user])
 
-    live("/log", LogLive)
+    live("/log/exercise", ExerciseLogLive)
+    live("/log/nutrition", NutritionLogLive)
     live("/feed", FeedLive)
 
     # Session Routes

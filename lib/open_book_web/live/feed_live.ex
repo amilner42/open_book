@@ -7,7 +7,8 @@ defmodule OpenBookWeb.FeedLive do
   import Phoenix.Component
 
   alias OpenBook.LittleLogger, as: LL
-  alias OpenBookWeb.LogLive
+  alias OpenBookWeb.ExerciseLogLive
+  alias OpenBookWeb.NutritionLogLive
 
   def mount(_params, %{"user_id" => user_id}, socket) do
     LL.metadata_add_current_user_id(user_id)
@@ -36,7 +37,7 @@ defmodule OpenBookWeb.FeedLive do
     <div class="new_entry_footer">
       <p class="buttons is-right pb-4 pr-4 are-small">
         <.link
-          navigate={Routes.live_path(OpenBookWeb.Endpoint, LogLive, %{kind: "nutrition"})}
+          navigate={Routes.live_path(OpenBookWeb.Endpoint, NutritionLogLive)}
           class="button is-rounded is-outlined is-link"
         >
           <span class="icon">
@@ -47,7 +48,7 @@ defmodule OpenBookWeb.FeedLive do
           </span>
         </.link>
         <.link
-          navigate={Routes.live_path(OpenBookWeb.Endpoint, LogLive, %{kind: "exercise"})}
+          navigate={Routes.live_path(OpenBookWeb.Endpoint, ExerciseLogLive)}
           class="button is-rounded is-link"
         >
           <span class="icon">
