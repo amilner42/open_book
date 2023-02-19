@@ -55,8 +55,8 @@ defmodule IexHelpers do
   def insert_default_nutrition_categories!() do
     default_nutrition_categories_params = [
       %{name: "Meal", icon_css_class: "fas fa-hamburger", calorie_options: Enum.map(3..20, &(&1 * 100))},
-      %{name: "Drink", icon_css_class: "fas fa-glass-martini", calorie_options: Enum.map(1..40, &(&1 * 50))},
-      %{name: "Snack", icon_css_class: "fas fa-carrot", calorie_options: Enum.map(1..40, &(&1 * 50))},
+      %{name: "Drinks", icon_css_class: "fas fa-glass-martini", calorie_options: Enum.map(1..40, &(&1 * 50))},
+      %{name: "Snacks", icon_css_class: "fas fa-carrot", calorie_options: Enum.map(1..40, &(&1 * 50))},
       %{name: "Dessert", icon_css_class: "fas fa-ice-cream", calorie_options: Enum.map(1..40, &(&1 * 50))}
     ]
 

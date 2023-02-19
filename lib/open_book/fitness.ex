@@ -7,6 +7,8 @@ defmodule OpenBook.Fitness do
   alias OpenBook.QueryBuilders, as: QB
   alias OpenBook.Repo
 
+  defdelegate human_readable_nutrition_and_calorie_selection(category_name, approx_calorie_count), to: NutritionCategory
+
   # DB Mutations
 
   def insert_new_nutrition_category!(by_user_id, params = %{name: _, calorie_options: _}) do
