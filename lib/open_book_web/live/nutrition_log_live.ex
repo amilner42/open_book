@@ -192,12 +192,15 @@ defmodule OpenBookWeb.NutritionLogLive do
 
   defp nutrition_title_section(assigns) do
     ~H"""
-    <section>
-      <p>
-        <div class="title is-4">
+    <section class="pb-4">
+      <div>
+        <p class="title is-4">
           Nutrition Log
-        </div>
-      </p>
+        </p>
+        <p class="subtitle is-7">
+          Stay on top of your diet
+        </p>
+      </div>
     </section>
     """
   end
