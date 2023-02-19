@@ -1,4 +1,4 @@
-# OpenBook
+# openbook.health
 
 It's your story. Get fit with your friends.
 
