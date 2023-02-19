@@ -50,6 +50,14 @@ defmodule OpenBookWeb.ExerciseLogLive do
       socket
       |> assign(:selected_exercise_category, selected_exercise_category)
 
+    # Selected intensity level
+
+    selected_intensity_level = params["sil"]
+
+    socket =
+      socket
+      |> assign(:selected_intensity_level, selected_intensity_level)
+
     # Selected exercise measurement
 
     selected_exercise_measurement = params["sem"]
@@ -66,13 +74,13 @@ defmodule OpenBookWeb.ExerciseLogLive do
   def render(assigns) do
     ~H"""
     <%= unless @page_loading do %>
-      <.exercise_title_section
-        selected_exercise_category={@selected_exercise_category}
-        selected_exercise_measurement={@selected_exercise_measurement}
-      />
-      <section class="section pt-0">
+      <section class="section">
+      <.exercise_title_section />
       <%= cond do %>
       <% !@selected_exercise_category  -> %>
+        <p class="pb-2">
+          What did you go for today?
+        </p>
         <div class="buttons are-medium">
         <%= for exercise_category <- @exercise_categories do %>
           <button
@@ -88,6 +96,33 @@ defmodule OpenBookWeb.ExerciseLogLive do
             <span class="has_text_dark_blue">
               <%= exercise_category.name %>
             </span>
+          </button>
+        <% end %>
+        </div>
+
+      <%= !@selected_intensity_level && @selected_exercise_category.measurement_kind == :duration -> %>
+        <p class="pb-2">
+          How hard did you go?
+        </p>
+        <%!-- TODO(Arie): Move intensity levels to exercise entry schema once I add it to DB. --%>
+        <div class="buttons">
+        <%= for intensity_level <- [:light, :regular, :intense] do %>
+          <button
+            class="button is-light is-fullwidth"
+            phx-click="select_intensity_level"
+            phx-value-intensity_level={intensity_level}
+          >
+            <%= case intensity_level do %>
+            <% :light -> %>
+              took it easy
+
+            <% :regular -> %>
+              the usual
+
+            <% :intense -> %>
+              went hard af
+
+            <% end %>
           </button>
         <% end %>
         </div>
@@ -133,38 +168,36 @@ defmodule OpenBookWeb.ExerciseLogLive do
     {:noreply, socket}
   end
 
+  def handle_event(
+        "select_intensity_level",
+        %{"intensity_level" => intensity_level},
+        socket
+      ) do
+    params = Map.merge(socket.assigns.params, %{sil: intensity_level})
+    to = Routes.live_path(OpenBookWeb.Endpoint, __MODULE__, params)
+
+    socket =
+      socket
+      |> push_patch(to: to, replace: false)
+
+    {:noreply, socket}
+  end
+
   # Private
 
   ## Markdowns
 
   defp exercise_title_section(assigns) do
     ~H"""
-    <section class="section pb-5">
-      <p>
-        <div class="title is-4">
+    <section class="pb-4">
+      <div>
+        <p class="title is-4">
           Exercise Log
-        </div>
-
-        <div class="subtitle is-6 mb-0">
-          What did you do? <span class="has-text-weight-semibold"><%= @selected_exercise_category && @selected_exercise_category.name %></span>
-        </div>
-
-        <%= case @selected_exercise_category && @selected_exercise_category.measurement_kind do %>
-        <% :duration -> %>
-          <div class="subtitle is-6 mb-0">
-            Approximately how long? <span class="has-text-weight-semibold"><%= @selected_exercise_measurement %></span>
-          </div>
-
-        <% :amount -> %>
-          <div class="subtitle is-6 mb-0">
-            How many? <span class="has-text-weight-semibold">todo</span>
-          </div>
-
-        <% nil -> %>
-          <%= nil %>
-
-        <% end %>
-      </p>
+        </p>
+        <p class="subtitle is-7">
+          It's always a better day when you workout
+        </p>
+      </div>
     </section>
     """
   end
