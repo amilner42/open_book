@@ -35,7 +35,7 @@ defmodule OpenBookWeb.FeedLive do
   defp new_entry_footer(assigns) do
     ~H"""
     <div class="new_entry_footer">
-      <p class="buttons is-right pb-4 pr-4 are-small">
+      <p class="buttons is-right pb-4 pr-4">
         <.link
           navigate={Routes.live_path(OpenBookWeb.Endpoint, NutritionLogLive)}
           class="button is-rounded is-outlined is-link"
