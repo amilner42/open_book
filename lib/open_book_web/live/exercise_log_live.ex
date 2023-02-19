@@ -129,15 +129,38 @@ defmodule OpenBookWeb.ExerciseLogLive do
 
       <%= !@selected_exercise_measurement -> %>
         <div class="buttons are-small">
-        <%= case @selected_exercise_category && @selected_exercise_category.measurement_kind do %>
-        <% nil -> %>
-          <%= nil %>
-
+        <%= case @selected_exercise_category.measurement_kind do %>
         <% :amount -> %>
-          todo amount
+          <p class="pb-2">
+            How many?
+          </p>
+          <div class="buttons">
+          <%= for amount_option <- get_amount_options() do %>
+            <button
+              class="button is-light is-fullwidth"
+              phx-click="select_exercise_measurement"
+              phx-value-exercise_measurement={amount_option}
+            >
+              <%= amount_option %>
+            </button>
+          <% end %>
+          </div>
 
         <% :duration -> %>
-          todo duration
+          <p class="pb-2">
+            For how long?
+          </p>
+          <div class="buttons">
+          <%= for minute_option <- get_duration_minute_options() do %>
+            <button
+              class="button is-light is-fullwidth"
+              phx-click="select_exercise_measurement"
+              phx-value-exercise_measurement={minute_option}
+            >
+              <%= human_readable_minute_option(minute_option) %>
+            </button>
+          <% end %>
+          </div>
 
         <% end %>
         </div>
@@ -183,7 +206,56 @@ defmodule OpenBookWeb.ExerciseLogLive do
     {:noreply, socket}
   end
 
+  def handle_event(
+        "select_exercise_measurement",
+        %{"exercise_measurement" => exercise_measurement},
+        socket
+      ) do
+    params = Map.merge(socket.assigns.params, %{sem: exercise_measurement})
+    to = Routes.live_path(OpenBookWeb.Endpoint, __MODULE__, params)
+
+    socket =
+      socket
+      |> push_patch(to: to, replace: false)
+
+    {:noreply, socket}
+  end
+
   # Private
+
+  defp get_duration_minute_options() do
+    sub_hour_options = Enum.to_list(10..60//5)
+    one_to_two_hour_options = Enum.to_list(70..120//10)
+    two_to_four_hours = Enum.to_list(135..240//15)
+    four_to_ten_hours = Enum.to_list(270..600//30)
+
+    sub_hour_options ++ one_to_two_hour_options ++ two_to_four_hours ++ four_to_ten_hours
+  end
+
+  defp get_amount_options() do
+    1..100
+  end
+
+  defp human_readable_minute_option(total_minutes) do
+    minutes = rem(total_minutes, 60)
+    hours = div(total_minutes, 60)
+
+    hour_text =
+      if hours == 0 do
+        ""
+      else
+        "#{hours} hour "
+      end
+
+    minutes_text =
+      if minutes == 0 do
+        ""
+      else
+        "#{minutes} min"
+      end
+
+    "#{hour_text}#{minutes_text}"
+  end
 
   ## Markdowns
 
