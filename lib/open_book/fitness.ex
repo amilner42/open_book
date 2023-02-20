@@ -9,6 +9,9 @@ defmodule OpenBook.Fitness do
 
   defdelegate human_readable_nutrition_and_calorie_selection(category_name, approx_calorie_count), to: NutritionCategory
 
+  defdelegate human_readable_exercise_selection(exercise_category, intensity_level, exercise_measurement),
+    to: ExerciseCategory
+
   # DB Mutations
 
   def insert_new_nutrition_category!(by_user_id, params = %{name: _, calorie_options: _}) do

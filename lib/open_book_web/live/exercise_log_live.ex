@@ -60,7 +60,7 @@ defmodule OpenBookWeb.ExerciseLogLive do
 
     # Selected exercise measurement
 
-    selected_exercise_measurement = params["sem"]
+    selected_exercise_measurement = params["sem"] && String.to_integer(params["sem"])
 
     socket =
       socket
@@ -166,7 +166,27 @@ defmodule OpenBookWeb.ExerciseLogLive do
         </div>
 
       <% true -> %>
-        <%= nil %>
+        <p class="pb-2">
+          <span>
+            <%=
+              Fitness.human_readable_exercise_selection(
+                @selected_exercise_category,
+                @selected_intensity_level,
+                @selected_exercise_measurement
+              )
+            %>
+          </span>
+        </p>
+        <button
+          class="button is-fullwidth is-dark has_background_dark_blue"
+        >
+          <span class="icon has-text-white">
+            <i class="fas fa-pencil-alt"></i>
+          </span>
+          <span>
+            Save
+          </span>
+        </button>
 
       <% end %>
       </section>
