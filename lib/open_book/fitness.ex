@@ -2,6 +2,7 @@ defmodule OpenBook.Fitness do
   import Ecto.Query
 
   alias OpenBook.Fitness.ExerciseCategory
+  alias OpenBook.Fitness.ExerciseEntry
   alias OpenBook.Fitness.NutritionCategory
   alias OpenBook.Fitness.NutritionEntry
   alias OpenBook.LittleLogger, as: LL
@@ -13,17 +14,29 @@ defmodule OpenBook.Fitness do
   defdelegate human_readable_exercise_selection(exercise_category, intensity_level, exercise_measurement),
     to: ExerciseCategory
 
+  defdelegate intensity_levels(), to: ExerciseEntry
+
   # DB Mutations
 
   def insert_new_nutrition_entry!(
         by_user_id,
         params = %{nutrition_category_id: _, calorie_estimate: _, local_datetime: _}
       ) do
-    LL.info_event("insert_new_nutrition_entry!", Map.merge(params, %{by_user_id: by_user_id}))
-
     params = Map.merge(params, %{user_id: by_user_id})
+    LL.info_event("insert_new_nutrition_entry!", params)
 
     NutritionEntry.new_entry_changeset(params)
+    |> Repo.insert!()
+  end
+
+  def insert_new_exercise_entry!(
+        by_user_id,
+        params = %{exercise_category_id: _, measurement: _, intensity_level: _, local_datetime: _}
+      ) do
+    params = Map.merge(params, %{user_id: by_user_id})
+    LL.info_event("insert_new_exercise_entry!", params)
+
+    ExerciseEntry.new_entry_changeset(params)
     |> Repo.insert!()
   end
 

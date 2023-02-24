@@ -161,6 +161,8 @@ defmodule OpenBookWeb.NutritionLogLive do
         },
         socket
       ) do
+    LL.info_event("handle_event", %{event_name: :confirm_add_new_nutrition_entry})
+
     %{user: user} = socket.assigns
 
     params = %{
@@ -173,6 +175,7 @@ defmodule OpenBookWeb.NutritionLogLive do
     Fitness.insert_new_nutrition_entry!(user.id, params)
 
     to = Routes.live_path(OpenBookWeb.Endpoint, FeedLive, %{})
+
     socket =
       socket
       |> push_navigate(to: to)

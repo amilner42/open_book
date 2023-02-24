@@ -7,12 +7,21 @@ defmodule OpenBookWeb.ExerciseLogLive do
   """
   use OpenBookWeb, :live_view_connected
 
-  alias OpenBook.LittleLogger, as: LL
+  alias OpenBook.Accounts
   alias OpenBook.Fitness
+  alias OpenBook.LittleLogger, as: LL
+
+  alias OpenBookWeb.FeedLive
 
   def mount_live(_params, %{"user_id" => user_id}, socket) do
     LL.metadata_add_current_user_id(user_id)
     LL.info_event("live_page_load", %{page: "ExerciseLogLive"})
+
+    user = Accounts.get_user!(user_id)
+
+    socket =
+      socket
+      |> assign(:user, user)
 
     {:ok, socket}
   end
@@ -104,9 +113,8 @@ defmodule OpenBookWeb.ExerciseLogLive do
         <p class="pb-2">
           How hard did you go?
         </p>
-        <%!-- TODO(Arie): Move intensity levels to exercise entry schema once I add it to DB. --%>
         <div class="buttons">
-        <%= for intensity_level <- [:light, :regular, :intense] do %>
+        <%= for intensity_level <- Fitness.intensity_levels do %>
           <button
             class="button is-light is-fullwidth"
             phx-click="select_intensity_level"
@@ -179,6 +187,10 @@ defmodule OpenBookWeb.ExerciseLogLive do
         </p>
         <button
           class="button is-fullwidth is-dark has_background_dark_blue"
+          phx-click="confirm_add_new_exercise_entry"
+          phx-value-selected_exercise_category_id={@selected_exercise_category.id}
+          phx-value-selected_exercise_measurement={@selected_exercise_measurement}
+          phx-value-selected_intensity_level={@selected_intensity_level}
         >
           <span class="icon has-text-white">
             <i class="fas fa-pencil-alt"></i>
@@ -195,6 +207,38 @@ defmodule OpenBookWeb.ExerciseLogLive do
   end
 
   ## Handle Events
+
+  def handle_event(
+        "confirm_add_new_exercise_entry",
+        params = %{
+          "selected_exercise_category_id" => selected_exercise_category_id,
+          "selected_exercise_measurement" => selected_exercise_measurement
+        },
+        socket
+      ) do
+    LL.info_event("handle_event", %{event_name: :confirm_add_new_exercise_entry})
+
+    %{user: user} = socket.assigns
+    selected_intensity_level = params["selected_intensity_level"]
+
+    params = %{
+      exercise_category_id: selected_exercise_category_id,
+      measurement: selected_exercise_measurement,
+      intensity_level: selected_intensity_level,
+      # TODO(Arie): timezone-support
+      local_datetime: DateTime.now!("America/Los_Angeles")
+    }
+
+    Fitness.insert_new_exercise_entry!(user.id, params)
+
+    to = Routes.live_path(OpenBookWeb.Endpoint, FeedLive, %{})
+
+    socket =
+      socket
+      |> push_navigate(to: to)
+
+    {:noreply, socket}
+  end
 
   def handle_event(
         "select_exercise_category",
