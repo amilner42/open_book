@@ -21,6 +21,8 @@ defmodule OpenBook.Fitness do
       ) do
     LL.info_event("insert_new_nutrition_entry!", Map.merge(params, %{by_user_id: by_user_id}))
 
+    params = Map.merge(params, %{user_id: by_user_id})
+
     NutritionEntry.new_entry_changeset(params)
     |> Repo.insert!()
   end

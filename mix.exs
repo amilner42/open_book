@@ -49,7 +49,8 @@ defmodule OpenBook.MixProject do
       {:gettext, "~> 0.18"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
-      {:logflare_logger_backend, "~> 0.11.0"}
+      {:logflare_logger_backend, "~> 0.11.0"},
+      {:tzdata, "~> 1.1"}
     ]
   end
 

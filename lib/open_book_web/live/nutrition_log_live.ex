@@ -7,12 +7,21 @@ defmodule OpenBookWeb.NutritionLogLive do
   """
   use OpenBookWeb, :live_view_connected
 
-  alias OpenBook.LittleLogger, as: LL
+  alias OpenBook.Accounts
   alias OpenBook.Fitness
+  alias OpenBook.LittleLogger, as: LL
+
+  alias OpenBookWeb.FeedLive
 
   def mount_live(_params, %{"user_id" => user_id}, socket) do
     LL.metadata_add_current_user_id(user_id)
     LL.info_event("live_page_load", %{page: "NutritionLogLive"})
+
+    user = Accounts.get_user!(user_id)
+
+    socket =
+      socket
+      |> assign(:user, user)
 
     {:ok, socket}
   end
@@ -146,13 +155,28 @@ defmodule OpenBookWeb.NutritionLogLive do
 
   def handle_event(
         "confirm_add_new_nutrition_entry",
-        params = %{
+        _params = %{
           "selected_nutrition_category_id" => selected_nutrition_category_id,
           "selected_calorie_count" => selected_calorie_count
         },
         socket
       ) do
-    # TODO(Arie): Implement.
+    %{user: user} = socket.assigns
+
+    params = %{
+      nutrition_category_id: selected_nutrition_category_id,
+      calorie_estimate: selected_calorie_count,
+      # TODO(Arie): timezone-support
+      local_datetime: DateTime.now!("America/Los_Angeles")
+    }
+
+    Fitness.insert_new_nutrition_entry!(user.id, params)
+
+    to = Routes.live_path(OpenBookWeb.Endpoint, FeedLive, %{})
+    socket =
+      socket
+      |> push_navigate(to: to)
+
     {:noreply, socket}
   end
 
