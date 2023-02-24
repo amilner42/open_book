@@ -24,6 +24,7 @@ defmodule IexHelpers do
       alias OpenBook.Fitness
       alias OpenBook.Fitness.ExerciseCategory
       alias OpenBook.Fitness.NutritionCategory
+      alias OpenBook.Fitness.NutritionEntry
 
       :ok
     end

@@ -3,6 +3,7 @@ defmodule OpenBook.Fitness do
 
   alias OpenBook.Fitness.ExerciseCategory
   alias OpenBook.Fitness.NutritionCategory
+  alias OpenBook.Fitness.NutritionEntry
   alias OpenBook.LittleLogger, as: LL
   alias OpenBook.QueryBuilders, as: QB
   alias OpenBook.Repo
@@ -13,6 +14,16 @@ defmodule OpenBook.Fitness do
     to: ExerciseCategory
 
   # DB Mutations
+
+  def insert_new_nutrition_entry!(
+        by_user_id,
+        params = %{nutrition_category_id: _, calorie_estimate: _, local_datetime: _}
+      ) do
+    LL.info_event("insert_new_nutrition_entry!", Map.merge(params, %{by_user_id: by_user_id}))
+
+    NutritionEntry.new_entry_changeset(params)
+    |> Repo.insert!()
+  end
 
   def insert_new_nutrition_category!(by_user_id, params = %{name: _, calorie_options: _}) do
     LL.info_event("insert_new_nutrition_category!", Map.merge(params, %{by_user_id: by_user_id}))
