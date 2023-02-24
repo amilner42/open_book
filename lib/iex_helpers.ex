@@ -32,18 +32,18 @@ defmodule IexHelpers do
 
   def insert_default_exercise_categories!() do
     default_exercise_categories_params = [
-      %{name: "Cardio", measurement_kind: :duration, icon_css_class: "fas fa-running"},
-      %{name: "Climbing", measurement_kind: :duration, icon_css_class: "fas fa-mountain"},
-      %{name: "Lifting Weights", measurement_kind: :duration, icon_css_class: "fas fa-dumbbell"},
-      %{name: "Tennis", measurement_kind: :duration, icon_css_class: "fas fa-table-tennis"},
-      %{name: "Hiking", measurement_kind: :duration, icon_css_class: "fas fa-hiking"},
-      %{name: "Snowboarding", measurement_kind: :duration, icon_css_class: "fas fa-snowboarding"},
-      %{name: "Yoga", measurement_kind: :duration},
-      %{name: "Push-ups", measurement_kind: :amount},
-      %{name: "Pull-ups", measurement_kind: :amount},
-      %{name: "Chin-ups", measurement_kind: :amount},
-      %{name: "Sit-ups", measurement_kind: :amount},
-      %{name: "Hanging Leg Raises", measurement_kind: :amount}
+      %{name: "Cardio", measurement_kind: :minutes, icon_css_class: "fas fa-running"},
+      %{name: "Climbing", measurement_kind: :minutes, icon_css_class: "fas fa-mountain"},
+      %{name: "Lifting Weights", measurement_kind: :minutes, icon_css_class: "fas fa-dumbbell"},
+      %{name: "Tennis", measurement_kind: :minutes, icon_css_class: "fas fa-table-tennis"},
+      %{name: "Hiking", measurement_kind: :minutes, icon_css_class: "fas fa-hiking"},
+      %{name: "Snowboarding", measurement_kind: :minutes, icon_css_class: "fas fa-snowboarding"},
+      %{name: "Yoga", measurement_kind: :minutes},
+      %{name: "Push-ups", measurement_kind: :repetitions},
+      %{name: "Pull-ups", measurement_kind: :repetitions},
+      %{name: "Chin-ups", measurement_kind: :repetitions},
+      %{name: "Sit-ups", measurement_kind: :repetitions},
+      %{name: "Hanging Leg Raises", measurement_kind: :repetitions}
     ]
 
     Repo.transaction(fn ->

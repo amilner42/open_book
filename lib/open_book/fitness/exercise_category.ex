@@ -3,7 +3,7 @@ defmodule OpenBook.Fitness.ExerciseCategory do
 
   import Ecto.Changeset
 
-  @measurement_kinds [:amount, :duration]
+  @measurement_kinds [:repetitions, :minutes]
 
   schema "exercise_categories" do
     field(:name, :string)

@@ -100,7 +100,7 @@ defmodule OpenBookWeb.ExerciseLogLive do
         <% end %>
         </div>
 
-      <%= !@selected_intensity_level && @selected_exercise_category.measurement_kind == :duration -> %>
+      <%= !@selected_intensity_level && @selected_exercise_category.measurement_kind == :minutes -> %>
         <p class="pb-2">
           How hard did you go?
         </p>
@@ -130,7 +130,7 @@ defmodule OpenBookWeb.ExerciseLogLive do
       <%= !@selected_exercise_measurement -> %>
         <div class="buttons are-small">
         <%= case @selected_exercise_category.measurement_kind do %>
-        <% :amount -> %>
+        <% :repetitions -> %>
           <p class="pb-2">
             How many?
           </p>
@@ -146,7 +146,7 @@ defmodule OpenBookWeb.ExerciseLogLive do
           <% end %>
           </div>
 
-        <% :duration -> %>
+        <% :minutes -> %>
           <p class="pb-2">
             For how long?
           </p>
