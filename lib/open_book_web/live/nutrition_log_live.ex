@@ -81,22 +81,24 @@ defmodule OpenBookWeb.NutritionLogLive do
             <p class="pt-0 pb-4">
               What did you have?
             </p>
-            <div class="buttons are-medium">
+            <div class="is-flex is-flex-direction-row is-flex-wrap-wrap	">
               <%= for nutrition_category <- @nutrition_categories do %>
-              <button
-                class="button is-light is-fullwidth has_border_grey"
-                phx-click="select_nutrition_category"
-                phx-value-nutrition_category_id={nutrition_category.id}
-              >
-                <%= if nutrition_category.icon_css_class do %>
-                <span class="icon is-small has_text_dark_blue">
-                  <i class={nutrition_category.icon_css_class}></i>
-                </span>
-                <% end %>
-                <span class="has_text_dark_blue">
-                  <%= nutrition_category.name %>
-                </span>
-              </button>
+              <div class="tile p-1">
+                <button
+                  class="button is-medium is-fullwidth is-light has_border_grey"
+                  phx-click="select_nutrition_category"
+                  phx-value-nutrition_category_id={nutrition_category.id}
+                >
+                  <%= if nutrition_category.icon_css_class do %>
+                  <span class="icon is-small has_text_dark_blue">
+                    <i class={nutrition_category.icon_css_class}></i>
+                  </span>
+                  <% end %>
+                  <span class="has_text_dark_blue">
+                    <%= nutrition_category.name %>
+                  </span>
+                </button>
+              </div>
               <% end %>
             </div>
 
@@ -104,15 +106,17 @@ defmodule OpenBookWeb.NutritionLogLive do
             <p class="pt-0 pb-4">
               Approximately how many calories?
             </p>
-            <div class="buttons are-small">
+            <div class="is-flex is-flex-direction-row is-flex-wrap-wrap	">
               <%= for calorie_count <- @selected_nutrition_category.calorie_options do %>
+              <div class="tile p-1">
                 <button
-                  class="button is-light is-fullwidth br-0 has_border_grey"
+                  class="button is-fullwidth is-light br-0 has_border_grey"
                   phx-click="select_calorie_option"
                   phx-value-calorie_count={calorie_count}
                 >
-                  <span class="">~<%= calorie_count %> calories</span>
+                  <span class=""><%= calorie_count %> calories</span>
                 </button>
+              </div>
               <% end %>
             </div>
 

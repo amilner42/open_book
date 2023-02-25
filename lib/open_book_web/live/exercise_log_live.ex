@@ -90,22 +90,24 @@ defmodule OpenBookWeb.ExerciseLogLive do
           What did you go for today?
         </p>
 
-        <div class="buttons are-medium">
+        <div class="is-flex is-flex-direction-row is-flex-wrap-wrap	">
         <%= for exercise_category <- @exercise_categories do %>
-          <button
-            class="button is-light is-fullwidth has_border_grey"
-            phx-click="select_exercise_category"
-            phx-value-exercise_category_id={exercise_category.id}
-          >
-            <%= if exercise_category.icon_css_class do %>
-            <span class="icon is-small has_text_dark_blue">
-              <i class={exercise_category.icon_css_class}></i>
-            </span>
-            <% end %>
-            <span class="has_text_dark_blue">
-              <%= exercise_category.name %>
-            </span>
-          </button>
+          <div class="tile p-1">
+            <button
+              class="button is-light is-medium is-fullwidth has_border_grey"
+              phx-click="select_exercise_category"
+              phx-value-exercise_category_id={exercise_category.id}
+            >
+              <%= if exercise_category.icon_css_class do %>
+              <span class="icon is-small has_text_dark_blue">
+                <i class={exercise_category.icon_css_class}></i>
+              </span>
+              <% end %>
+              <span class="has_text_dark_blue">
+                <%= exercise_category.name %>
+              </span>
+            </button>
+          </div>
         <% end %>
         </div>
 
@@ -113,44 +115,47 @@ defmodule OpenBookWeb.ExerciseLogLive do
         <p class="pt-0 pb-4">
           How hard did you go?
         </p>
-        <div class="buttons">
+        <div class="is-flex is-flex-direction-row is-flex-wrap-wrap	">
         <%= for intensity_level <- Fitness.intensity_levels do %>
-          <button
-            class="button is-light is-fullwidth has_border_grey"
-            phx-click="select_intensity_level"
-            phx-value-intensity_level={intensity_level}
-          >
-            <%= case intensity_level do %>
-            <% :light -> %>
-              took it easy
+          <div class="tile p-1">
+            <button
+              class="button is-light is-medium is-fullwidth has_border_grey"
+              phx-click="select_intensity_level"
+              phx-value-intensity_level={intensity_level}
+            >
+              <%= case intensity_level do %>
+              <% :light -> %>
+                took it easy
 
-            <% :regular -> %>
-              the usual
+              <% :regular -> %>
+                the usual
 
-            <% :intense -> %>
-              went hard af
+              <% :intense -> %>
+                went hard af
 
-            <% end %>
-          </button>
+              <% end %>
+            </button>
+          </div>
         <% end %>
         </div>
 
       <%= !@selected_exercise_measurement -> %>
-        <div class="buttons are-small">
         <%= case @selected_exercise_category.measurement_kind do %>
         <% :repetitions -> %>
           <p class="pt-0 pb-4">
             How many?
           </p>
-          <div class="buttons">
+          <div class="is-flex is-flex-direction-row is-flex-wrap-wrap	">
           <%= for amount_option <- get_amount_options() do %>
-            <button
-              class="button is-light is-fullwidth has_border_grey"
-              phx-click="select_exercise_measurement"
-              phx-value-exercise_measurement={amount_option}
-            >
-              <%= amount_option %>
-            </button>
+            <div class="tile p-1">
+              <button
+                class="button is-medium is-light is-fullwidth has_border_grey"
+                phx-click="select_exercise_measurement"
+                phx-value-exercise_measurement={amount_option}
+              >
+                <%= amount_option %>
+              </button>
+            </div>
           <% end %>
           </div>
 
@@ -158,20 +163,21 @@ defmodule OpenBookWeb.ExerciseLogLive do
           <p class="pt-0 pb-4">
             For how long?
           </p>
-          <div class="buttons">
+          <div class="is-flex is-flex-direction-row is-flex-wrap-wrap	">
           <%= for minute_option <- get_duration_minute_options() do %>
-            <button
-              class="button is-light is-fullwidth has_border_grey"
-              phx-click="select_exercise_measurement"
-              phx-value-exercise_measurement={minute_option}
-            >
-              <%= human_readable_minute_option(minute_option) %>
-            </button>
+            <div class="tile p-1">
+              <button
+                class="button is-medium is-light is-fullwidth has_border_grey"
+                phx-click="select_exercise_measurement"
+                phx-value-exercise_measurement={minute_option}
+              >
+                <%= human_readable_minute_option(minute_option) %>
+              </button>
+            </div>
           <% end %>
           </div>
 
         <% end %>
-        </div>
 
       <% true -> %>
         <p class="pt-0 pb-4 has-text-centered">
