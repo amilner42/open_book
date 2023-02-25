@@ -7,7 +7,9 @@ defmodule OpenBookWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_open_book_key",
-    signing_salt: "rGB+RZSV"
+    signing_salt: "rGB+RZSV",
+    # Keep users logged in for 1 year.
+    max_age: 60 * 60 * 24 * 365
   ]
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
