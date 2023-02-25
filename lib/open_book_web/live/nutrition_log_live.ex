@@ -85,7 +85,7 @@ defmodule OpenBookWeb.NutritionLogLive do
             <div class="buttons are-medium">
               <%= for nutrition_category <- @nutrition_categories do %>
               <button
-                class="button is-light is-fullwidth"
+                class="button is-light is-fullwidth has_border_grey"
                 phx-click="select_nutrition_category"
                 phx-value-nutrition_category_id={nutrition_category.id}
               >
@@ -108,7 +108,7 @@ defmodule OpenBookWeb.NutritionLogLive do
             <div class="buttons are-small">
               <%= for calorie_count <- @selected_nutrition_category.calorie_options do %>
                 <button
-                  class="button is-light is-fullwidth br-0"
+                  class="button is-light is-fullwidth br-0 has_border_grey"
                   phx-click="select_calorie_option"
                   phx-value-calorie_count={calorie_count}
                 >
@@ -118,7 +118,7 @@ defmodule OpenBookWeb.NutritionLogLive do
             </div>
 
           <% @selected_nutrition_category && @selected_calorie_count -> %>
-            <p class="pb-2">
+            <p class="pb-4">
               <span>
                 <%=
                   Fitness.human_readable_nutrition_and_calorie_selection(

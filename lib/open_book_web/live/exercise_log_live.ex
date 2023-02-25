@@ -93,7 +93,7 @@ defmodule OpenBookWeb.ExerciseLogLive do
         <div class="buttons are-medium">
         <%= for exercise_category <- @exercise_categories do %>
           <button
-            class="button is-light is-fullwidth"
+            class="button is-light is-fullwidth has_border_grey"
             phx-click="select_exercise_category"
             phx-value-exercise_category_id={exercise_category.id}
           >
@@ -116,7 +116,7 @@ defmodule OpenBookWeb.ExerciseLogLive do
         <div class="buttons">
         <%= for intensity_level <- Fitness.intensity_levels do %>
           <button
-            class="button is-light is-fullwidth"
+            class="button is-light is-fullwidth has_border_grey"
             phx-click="select_intensity_level"
             phx-value-intensity_level={intensity_level}
           >
@@ -145,7 +145,7 @@ defmodule OpenBookWeb.ExerciseLogLive do
           <div class="buttons">
           <%= for amount_option <- get_amount_options() do %>
             <button
-              class="button is-light is-fullwidth"
+              class="button is-light is-fullwidth has_border_grey"
               phx-click="select_exercise_measurement"
               phx-value-exercise_measurement={amount_option}
             >
@@ -161,7 +161,7 @@ defmodule OpenBookWeb.ExerciseLogLive do
           <div class="buttons">
           <%= for minute_option <- get_duration_minute_options() do %>
             <button
-              class="button is-light is-fullwidth"
+              class="button is-light is-fullwidth has_border_grey"
               phx-click="select_exercise_measurement"
               phx-value-exercise_measurement={minute_option}
             >
@@ -174,7 +174,7 @@ defmodule OpenBookWeb.ExerciseLogLive do
         </div>
 
       <% true -> %>
-        <p class="pb-2">
+        <p class="pb-4">
           <span>
             <%=
               Fitness.human_readable_exercise_selection(

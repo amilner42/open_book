@@ -30,6 +30,10 @@ nav.navbar {
     border-color: #2f364d;
 }
 
+.has_border_grey {
+    border: 0.25px #DFDFDF solid !important;
+}
+
 .has_background_dark_blue {
     background-color: #2f364d !important;
 }
