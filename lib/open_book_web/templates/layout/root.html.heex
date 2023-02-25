@@ -40,8 +40,14 @@
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="buttons">
+              <%= link class: "button is-rounded is-small is-light b-0", to: "https://github.com/amilner42/open_book" do %>
+                <span class="icon">
+                  <i class="fab fa-github"></i>
+                </span>
+                <span>GitHub</span>
+              <% end %>
               <%= if @current_user  do %>
-                <%= link "Log out", class: "button is-small", to: Routes.session_path(@conn, :delete) %>
+                <%= link "Logout", class: "button is-rounded is-small", to: Routes.session_path(@conn, :delete) %>
               <% end %>
             </div>
           </div>
