@@ -28,16 +28,16 @@ defmodule OpenBook.Fitness.NutritionCategory do
   def human_readable_nutrition_and_calorie_selection(category_name, approx_calorie_count) do
     case category_name do
       "Meal" ->
-        "I had a ~#{approx_calorie_count} calorie meal."
+        "I had a ~#{approx_calorie_count} calorie meal"
 
       "Drinks" ->
-        "I had ~#{approx_calorie_count} calories of drinks."
+        "I had ~#{approx_calorie_count} calories of drinks"
 
       "Snacks" ->
-        "I had ~#{approx_calorie_count} calories of snacks."
+        "I had ~#{approx_calorie_count} calories of snacks"
 
       "Dessert" ->
-        "I had a ~#{approx_calorie_count} calorie dessert."
+        "I had a ~#{approx_calorie_count} calorie dessert"
     end
   end
 end

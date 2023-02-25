@@ -20,8 +20,6 @@ defmodule OpenBookWeb.FeedLive do
 
   def render(assigns) do
     ~H"""
-    Feed Page.
-
     <.new_entry_footer />
     """
   end
@@ -35,27 +33,27 @@ defmodule OpenBookWeb.FeedLive do
   defp new_entry_footer(assigns) do
     ~H"""
     <div class="new_entry_footer">
-      <p class="buttons is-right pb-4 pr-4">
+      <p class="buttons is-right pb-4 pr-4 ">
         <.link
           navigate={Routes.live_path(OpenBookWeb.Endpoint, NutritionLogLive)}
-          class="button is-rounded is-outlined is-link"
+          class="button is-light has_border_grey has_text_dark_blue b-0"
         >
-          <span class="icon">
-            <i class="fas fa-utensils"></i>
+          <span class="icon has_text_dark_blue">
+            <i class="fas fa-utensils mr-0"></i>
           </span>
-          <span>
-            Log Nutrition
+          <span class="has_text_dark_blue">
+            log nutrition
           </span>
         </.link>
         <.link
           navigate={Routes.live_path(OpenBookWeb.Endpoint, ExerciseLogLive)}
-          class="button is-rounded is-link"
+          class="button is-light has_border_grey has_text_dark_blue b-0"
         >
-          <span class="icon">
+          <span class="icon has_text_dark_blue">
             <i class="fas fa-dumbbell"></i>
           </span>
           <span>
-            Log Workout
+            record workout
           </span>
         </.link>
       </p>

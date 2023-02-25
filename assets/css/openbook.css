@@ -3,7 +3,7 @@ body {
 }
 
 .has_blue_bg {
-    background-color: #5cceff;
+    background-color: #5cceff !important;
 }
 
 .new_entry_footer {
@@ -26,6 +26,10 @@ nav.navbar {
     color: #2f364d;
 }
 
+.has_text_blue {
+    color: #5cceff !important;
+}
+
 .has_dark_blue_border {
     border-color: #2f364d;
 }
@@ -34,8 +38,16 @@ nav.navbar {
     border: 0.25px #DFDFDF solid !important;
 }
 
+.has_border_blue {
+    border: 0.25px #5cceff solid !important;
+}
+
 .has_background_dark_blue {
     background-color: #2f364d !important;
+}
+
+.has_background_purple {
+    background-color: #8746e3 !important;
 }
 
 .has_purple_border {
@@ -50,4 +62,8 @@ nav.navbar {
 
 .br-0 {
     border-radius: 0px !important;
+}
+
+.b-0 {
+    border-style: none;
 }

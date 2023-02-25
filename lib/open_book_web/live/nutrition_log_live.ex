@@ -75,11 +75,10 @@ defmodule OpenBookWeb.NutritionLogLive do
   def render(assigns) do
     ~H"""
     <%= unless @page_loading do %>
-        <section class="section">
-          <.nutrition_title_section />
+        <section class="section pt-5">
           <%= cond do %>
           <% !@selected_nutrition_category -> %>
-            <p class="pb-2">
+            <p class="pt-0 pb-4">
               What did you have?
             </p>
             <div class="buttons are-medium">
@@ -102,7 +101,7 @@ defmodule OpenBookWeb.NutritionLogLive do
             </div>
 
           <% !@selected_calorie_count -> %>
-            <p class="pb-2">
+            <p class="pt-0 pb-4">
               Approximately how many calories?
             </p>
             <div class="buttons are-small">
@@ -118,7 +117,7 @@ defmodule OpenBookWeb.NutritionLogLive do
             </div>
 
           <% @selected_nutrition_category && @selected_calorie_count -> %>
-            <p class="pb-4">
+            <p class="pt-0 pb-4 has-text-centered">
               <span>
                 <%=
                   Fitness.human_readable_nutrition_and_calorie_selection(
@@ -129,7 +128,7 @@ defmodule OpenBookWeb.NutritionLogLive do
               </span>
             </p>
             <button
-              class="button is-fullwidth is-dark has_background_dark_blue "
+              class="button is-fullwidth is-dark has_background_purple"
               phx-click="confirm_add_new_nutrition_entry"
               phx-value-selected_nutrition_category_id={@selected_nutrition_category.id}
               phx-value-selected_calorie_count={@selected_calorie_count}
@@ -211,24 +210,5 @@ defmodule OpenBookWeb.NutritionLogLive do
       |> push_patch(to: to, replace: false)
 
     {:noreply, socket}
-  end
-
-  # Private
-
-  ## Markdowns
-
-  defp nutrition_title_section(assigns) do
-    ~H"""
-    <section class="pb-4">
-      <div>
-        <p class="title is-4">
-          Nutrition Log
-        </p>
-        <p class="subtitle is-7">
-          Stay on top of your diet
-        </p>
-      </div>
-    </section>
-    """
   end
 end

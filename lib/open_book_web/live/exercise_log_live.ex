@@ -83,13 +83,13 @@ defmodule OpenBookWeb.ExerciseLogLive do
   def render(assigns) do
     ~H"""
     <%= unless @page_loading do %>
-      <section class="section">
-      <.exercise_title_section />
+      <section class="section pt-5">
       <%= cond do %>
       <% !@selected_exercise_category  -> %>
-        <p class="pb-2">
+        <p class="pt-0 pb-4">
           What did you go for today?
         </p>
+
         <div class="buttons are-medium">
         <%= for exercise_category <- @exercise_categories do %>
           <button
@@ -110,7 +110,7 @@ defmodule OpenBookWeb.ExerciseLogLive do
         </div>
 
       <%= !@selected_intensity_level && @selected_exercise_category.measurement_kind == :minutes -> %>
-        <p class="pb-2">
+        <p class="pt-0 pb-4">
           How hard did you go?
         </p>
         <div class="buttons">
@@ -139,7 +139,7 @@ defmodule OpenBookWeb.ExerciseLogLive do
         <div class="buttons are-small">
         <%= case @selected_exercise_category.measurement_kind do %>
         <% :repetitions -> %>
-          <p class="pb-2">
+          <p class="pt-0 pb-4">
             How many?
           </p>
           <div class="buttons">
@@ -155,7 +155,7 @@ defmodule OpenBookWeb.ExerciseLogLive do
           </div>
 
         <% :minutes -> %>
-          <p class="pb-2">
+          <p class="pt-0 pb-4">
             For how long?
           </p>
           <div class="buttons">
@@ -174,7 +174,7 @@ defmodule OpenBookWeb.ExerciseLogLive do
         </div>
 
       <% true -> %>
-        <p class="pb-4">
+        <p class="pt-0 pb-4 has-text-centered">
           <span>
             <%=
               Fitness.human_readable_exercise_selection(
@@ -186,7 +186,7 @@ defmodule OpenBookWeb.ExerciseLogLive do
           </span>
         </p>
         <button
-          class="button is-fullwidth is-dark has_background_dark_blue"
+          class="button is-fullwidth is-dark has_background_purple"
           phx-click="confirm_add_new_exercise_entry"
           phx-value-selected_exercise_category_id={@selected_exercise_category.id}
           phx-value-selected_exercise_measurement={@selected_exercise_measurement}
@@ -319,22 +319,5 @@ defmodule OpenBookWeb.ExerciseLogLive do
       end
 
     "#{hour_text}#{minutes_text}"
-  end
-
-  ## Markdowns
-
-  defp exercise_title_section(assigns) do
-    ~H"""
-    <section class="pb-4">
-      <div>
-        <p class="title is-4">
-          Exercise Log
-        </p>
-        <p class="subtitle is-7">
-          It's always a better day when you workout
-        </p>
-      </div>
-    </section>
-    """
   end
 end
