@@ -97,10 +97,10 @@ defmodule OpenBookWeb.FeedLive do
 
   defp top_bar_nav(assigns) do
     ~H"""
-    <div class="buttons top-bar are-small has-addons is-centered pt-4 pb-4 mb-0 button-navbar">
+    <div class="buttons top-bar has-addons is-centered pt-4 pb-4 mb-0 button-navbar">
       <button
         class={ViewUtils.class_list("button", %{"is-selected": @selected_tab == "stats" })}
-        style="width: 90px"
+        style="width: 110px"
         phx-click="top_level_navigate"
         phx-value-top_bar_tab="stats"
       >
@@ -112,7 +112,7 @@ defmodule OpenBookWeb.FeedLive do
 
       <button
         class={ViewUtils.class_list("button", %{"is-selected": @selected_tab == "history" })}
-        style="width: 90px"
+        style="width: 110px"
         phx-click="top_level_navigate"
         phx-value-top_bar_tab="history"
       >
