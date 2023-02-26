@@ -1,6 +1,6 @@
 # openbook.health
 
-It's your story. Get fit with your friends.
+Stay fit with friends. It's your story. And it's personal.
 
 ### Project Status
 
@@ -11,15 +11,14 @@ TODO(Arie): List features / roadmap once I ship a janky-but-working prototype.
 
 ### Development
 
-The project is developed with [Postgres](https://www.postgresql.org/),
+The project is developed with [Postgres](https://www.postgresql.org/), [Elixir](https://elixir-lang.org/),
 [Phoenix](https://www.phoenixframework.org/), and
 [LiveView](https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html).
 
 #### Setup
 
-  * Install correct Elixir/Erlang versions with `asdf`.
-  * Follow instructions to set env variables in `.env-template`.
-    * `source .env` to set variables in your shell
+  * Install correct Elixir/Erlang versions in `.tool_versions` with `asdf install`.
+  * Fill in environment variables in `.env-template`.
   * Install dependencies with `mix deps.get`
   * Create and migrate your database with `mix ecto.setup`
   * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
