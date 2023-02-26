@@ -2,6 +2,17 @@ body {
     font-family: 'DM Sans', sans-serif;
 }
 
+/* To make hero height work on mobile. Otherwise broken on chrome-mobile.
+
+Refer: https://css-tricks.com/the-trick-to-viewport-units-on-mobile/
+*/
+.hero.is-fullheight {
+    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100 - 56px) !important;
+    min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100 - 56px) !important;
+}
+
 .has_blue_bg {
     background-color: #5cceff !important;
 }
