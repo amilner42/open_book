@@ -237,7 +237,8 @@ defmodule OpenBookWeb.ExerciseLogLive do
 
     Fitness.insert_new_exercise_entry!(user.id, params)
 
-    to = Routes.live_path(OpenBookWeb.Endpoint, FeedLive, %{})
+    # @top_bar_history_tab
+    to = Routes.live_path(OpenBookWeb.Endpoint, FeedLive, %{stbt: "history"})
 
     socket =
       socket

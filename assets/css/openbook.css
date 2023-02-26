@@ -66,3 +66,18 @@ nav.navbar {
 .b-0 {
     border-style: none;
 }
+
+.top-bar button {
+    font-weight: 800;
+    color: #2f364d;
+    border: none;
+    border-bottom: #DDD 1px solid;
+    border-radius: 0px !important;
+    opacity: 0.6;
+}
+
+.top-bar button.is-selected {
+    opacity: 1;
+    color: #2f364d;
+    border-bottom-color: #2f364d;
+}
