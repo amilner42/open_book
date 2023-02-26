@@ -16,6 +16,13 @@ defmodule OpenBook.LittleLogger do
     Logger.metadata(current_user: user_id)
   end
 
+  @doc """
+  Add the current page name to the logger metadata.
+  """
+  def metadata_add_current_page(page_name) do
+    Logger.metadata(current_page: page_name)
+  end
+
   ## Logging
 
   ### Info

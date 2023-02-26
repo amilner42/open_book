@@ -15,7 +15,8 @@ defmodule OpenBookWeb.NutritionLogLive do
 
   def mount_live(_params, %{"user_id" => user_id}, socket) do
     LL.metadata_add_current_user_id(user_id)
-    LL.info_event("live_page_load", %{page: "NutritionLogLive"})
+    LL.metadata_add_current_page("NutritionLogLive")
+    LL.info_event("mount_live")
 
     user = Accounts.get_user!(user_id)
 
@@ -27,6 +28,8 @@ defmodule OpenBookWeb.NutritionLogLive do
   end
 
   def handle_params_live(params, _url, socket) do
+    LL.info_event("handle_params_live", params)
+
     # Params
 
     socket =
