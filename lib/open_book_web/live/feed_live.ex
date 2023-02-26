@@ -52,7 +52,7 @@ defmodule OpenBookWeb.FeedLive do
         },
         socket
       ) do
-    LL.info_event("top_level_navigate", params)
+    LL.info_event("handle_event", Map.merge(params, %{event_name: :top_level_navigate}))
 
     params = Map.merge(socket.assigns.params, %{stbt: top_bar_tab})
     to = Routes.live_path(OpenBookWeb.Endpoint, __MODULE__, params)
