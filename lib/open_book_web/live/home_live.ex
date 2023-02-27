@@ -18,38 +18,38 @@ defmodule OpenBookWeb.HomeLive do
   @top_bar_friends_tab "friends"
   @top_bar_tabs [@top_bar_stats_tab, @top_bar_book_tab, @top_bar_friends_tab]
 
-  @mock_daily_histories [
+  @mock_book_daily_pages [
     %{
       date: ~D[2023-02-26],
-      my_summary: {"You had 1900 calories.", "You did 1 hour and 15 minutes of intense cardio and 22 pushups."},
-      summary_by_user_display_name: %{
-        Charlie: {"Charlie had 2000 calories", "Charlie did a 30 min casual bike and then 55 pushups."},
-        Robin: {"Robin had 2500 calories.", "Robin did 90 minutes of intense cardio"}
-      }
+      my_summary: {"You didn't log any nutrition.", "You didn't exercise."},
+      summary_by_friend_display_name: [
+        {"Charlie had 2000 calories", "Charlie didn't exercise."},
+        {"Robin had 2500 calories.", "Robin didn't exercise."}
+      ]
     },
     %{
       date: ~D[2023-02-25],
       my_summary: {"You had 1900 calories.", "You did 1 hour 15 min intense cardio and 22 pushups."},
-      summary_by_user_display_name: %{
-        Charlie: {"Charlie had 2000 calories", "Charlie did a 30 min casual bike."},
-        Robin: {"Robin had 2500 calories.", "Robin did 90 minutes"}
-      }
+      summary_by_friend_display_name: [
+        {"Charlie had 2000 calories", "Charlie did a 30 min casual bike."},
+        {"", "Robin did 90 minutes"}
+      ]
     },
     %{
       date: ~D[2023-02-24],
-      my_summary: {"You had 1900 calories.", "You did 1 hour 15 min intense cardio and 22 pushups."},
-      summary_by_user_display_name: %{
-        Charlie: {"Charlie had 2000 calories", "Charlie did a 30 min casual bike."},
-        Robin: {"Robin had 2500 calories.", "Robin did 90 minute intense cardio"}
-      }
+      my_summary: {"", "You did 1 hour 15 min intense cardio and 22 pushups."},
+      summary_by_friend_display_name: [
+        {"Charlie had 2000 calories", "Charlie did a 30 min casual bike."},
+        {"Robin had 2500 calories.", "Robin did 90 minute intense cardio"}
+      ]
     },
     %{
       date: ~D[2023-02-23],
       my_summary: {"You had 1900 calories.", "You did 1 hour 15 min intense cardio and 22 pushups."},
-      summary_by_user_display_name: %{
-        Charlie: {"Charlie had 2000 calories", "Charlie did a 30 min casual bike."},
-        Robin: {"Robin had 2500 calories.", "Robin did 90 minute intense cardio"}
-      }
+      summary_by_friend_display_name: [
+        {"Charlie had 2000 calories", "Charlie did a 30 min casual bike."},
+        {"Robin had 2500 calories.", "Robin did 90 minute intense cardio"}
+      ]
     }
   ]
 
@@ -90,7 +90,7 @@ defmodule OpenBookWeb.HomeLive do
       case selected_top_bar_tab do
         @top_bar_book_tab ->
           socket
-          |> assign(:daily_histories, @mock_daily_histories)
+          |> assign(:book_daily_pages, @mock_book_daily_pages)
 
         _ ->
           socket
@@ -140,7 +140,7 @@ defmodule OpenBookWeb.HomeLive do
 
       <% "book" -> %>
         <div>
-          <%= for day <- @daily_histories do %>
+          <%= for day <- @book_daily_pages do %>
           <div class="mb-4 daily-entry">
             <div class="is-capitalized is-size-4 has-text-centered pb-4 has-text-weight-bold">
               <%= DateHelpers.readable_date(DateTime.now!("America/Los_Angeles"), day.date, :human_relative_lingo_with_prefix) %>
@@ -168,7 +168,7 @@ defmodule OpenBookWeb.HomeLive do
               <div class="pb-4" style="line-height: 20px;">
                 <%= {cal_summary, _} = day.my_summary; cal_summary %>
               </div>
-              <%= for {user_display_name, {summary, _}} <- day.summary_by_user_display_name do %>
+              <%= for {summary, _} <- day.summary_by_friend_display_name do %>
               <div class="level is-mobile pl-2 pb-0 mb-0">
                 <div class="level-left">
                   <div class="level-item mr-1">
@@ -207,7 +207,7 @@ defmodule OpenBookWeb.HomeLive do
               <div class="pb-4" style="line-height: 20px;">
                 <%= {_, exercise_summary} = day.my_summary; exercise_summary %>
               </div>
-              <%= for {user_display_name, {_, summary}} <- day.summary_by_user_display_name do %>
+              <%= for {_, summary} <- day.summary_by_friend_display_name do %>
               <div class="level is-mobile pl-2 pb-0 mb-2">
                 <div class="level-left">
                   <div class="level-item mr-2">
