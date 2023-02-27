@@ -1,4 +1,5 @@
 defmodule OpenBook.Accounts do
+  alias OpenBook.Accounts.Friend
   alias OpenBook.Accounts.User
   alias OpenBook.Accounts.VerificationCode
   alias OpenBook.LittleLogger, as: LL
@@ -29,6 +30,11 @@ defmodule OpenBook.Accounts do
 
   def get_user(user_id) do
     Repo.get(User, user_id)
+  end
+
+  def get_friend_ids_by_open_book(user_id) do
+    # Friend.
+    :todo
   end
 
   # TODO(Arie): Check VC is not expired.

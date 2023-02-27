@@ -92,3 +92,10 @@ nav.navbar {
     color: #2f364d;
     border-bottom-color: #2f364d;
 }
+
+.daily-entry {
+    background-color: #FFF;
+    border: 0.5px solid #DDD;
+    border-radius: 2px;
+    padding: 20px;
+}
