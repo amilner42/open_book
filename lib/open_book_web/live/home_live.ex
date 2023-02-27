@@ -1,4 +1,4 @@
-defmodule OpenBookWeb.FeedLive do
+defmodule OpenBookWeb.HomeLive do
   @moduledoc """
   The LiveView for the feed page which is essentially the home page, showing a list of
   """
@@ -54,7 +54,7 @@ defmodule OpenBookWeb.FeedLive do
 
   def mount_live(_params, %{"user_id" => user_id}, socket) do
     LL.metadata_add_current_user_id(user_id)
-    LL.metadata_add_current_page("FeedLive")
+    LL.metadata_add_current_page("HomeLive")
     LL.info_event("mount_live")
 
     user = Accounts.get_user!(user_id)
