@@ -14,8 +14,8 @@ defmodule OpenBookWeb.HomeLive do
   alias OpenBookWeb.ViewUtils
 
   @top_bar_stats_tab "stats"
-  @top_bar_history_tab "history"
-  @top_bar_tabs [@top_bar_stats_tab, @top_bar_history_tab]
+  @top_bar_book_tab "book"
+  @top_bar_tabs [@top_bar_stats_tab, @top_bar_book_tab]
 
   @mock_daily_histories [
     %{
@@ -87,7 +87,7 @@ defmodule OpenBookWeb.HomeLive do
 
     socket =
       case selected_top_bar_tab do
-        @top_bar_history_tab ->
+        @top_bar_book_tab ->
           socket
           |> assign(:daily_histories, @mock_daily_histories)
 
@@ -137,7 +137,7 @@ defmodule OpenBookWeb.HomeLive do
           coming soon
         </div>
 
-      <% "history" -> %> <% # @top_bar_history_tab %>
+      <% "book" -> %>
         <div>
           <%= for day <- @daily_histories do %>
           <div class="mb-4 daily-entry">
@@ -255,10 +255,10 @@ defmodule OpenBookWeb.HomeLive do
       </button>
 
       <button
-        class={ViewUtils.class_list("button", %{"is-selected": @selected_tab == "history" })}
+        class={ViewUtils.class_list("button", %{"is-selected": @selected_tab == "book" })}
         style="width: 110px"
         phx-click="top_level_navigate"
-        phx-value-top_bar_tab="history"
+        phx-value-top_bar_tab="book"
       >
         <span class="icon">
           <i class="fas fa-book"></i>
@@ -270,7 +270,7 @@ defmodule OpenBookWeb.HomeLive do
         class={ViewUtils.class_list("button", %{"is-selected": @selected_tab == "friends" })}
         style="width: 110px"
         phx-click="top_level_navigate"
-        phx-value-top_bar_tab="history"
+        phx-value-top_bar_tab="friends"
       >
         <span class="icon">
           <i class="fas fa-user-friends"></i>
