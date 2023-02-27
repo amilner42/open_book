@@ -15,7 +15,8 @@ defmodule OpenBookWeb.HomeLive do
 
   @top_bar_stats_tab "stats"
   @top_bar_book_tab "book"
-  @top_bar_tabs [@top_bar_stats_tab, @top_bar_book_tab]
+  @top_bar_friends_tab "friends"
+  @top_bar_tabs [@top_bar_stats_tab, @top_bar_book_tab, @top_bar_friends_tab]
 
   @mock_daily_histories [
     %{
@@ -134,7 +135,7 @@ defmodule OpenBookWeb.HomeLive do
       <%= case @selected_top_bar_tab do %>
       <% "stats" -> %> <% # @top_bar_stats_tab %>
         <div class="has-text-centered">
-          coming soon
+          see stats here soon
         </div>
 
       <% "book" -> %>
@@ -225,6 +226,11 @@ defmodule OpenBookWeb.HomeLive do
             </div>
           </div>
           <% end %>
+        </div>
+
+      <% "friends" -> %>
+        <div class="has-text-centered">
+          add friends here soon
         </div>
 
       <% end %>

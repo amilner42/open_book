@@ -4,7 +4,7 @@ defmodule OpenBook.DateHelpers do
   """
 
   def readable_date(user_local_date, other_date, :human_relative_lingo_with_prefix) do
-    case IO.inspect(Date.diff(user_local_date, other_date)) do
+    case Date.diff(user_local_date, other_date) do
       -1 ->
         "tomorrow"
 
