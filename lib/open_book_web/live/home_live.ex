@@ -52,6 +52,10 @@ defmodule OpenBookWeb.HomeLive do
         @top_bar_book_tab
       end
 
+    socket =
+      socket
+      |> assign(:selected_top_bar_tab, selected_top_bar_tab)
+
     # Top Bar Tab Required Nested Data
 
     socket =
@@ -66,10 +70,6 @@ defmodule OpenBookWeb.HomeLive do
         _ ->
           socket
       end
-
-    socket =
-      socket
-      |> assign(:selected_top_bar_tab, selected_top_bar_tab)
 
     {:noreply, socket}
   end
