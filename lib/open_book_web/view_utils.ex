@@ -18,14 +18,22 @@ defmodule OpenBookWeb.ViewUtils do
     end)
   end
 
-  @doc """
+  @doc ~S"""
   Create a human-readable list of things and-ed together.
 
-  Examples:
-    [] -> ""
-    ["biking"] -> "biking"
-    ["biking", "climbing"] -> "biking and climbing"
-    ["biking", "climbing", "swimming"] -> "climbing, swimming, and biking"
+  ## Examples:
+
+    iex> OpenBookWeb.ViewUtils.readable_and_list([])
+    ""
+
+    iex> OpenBookWeb.ViewUtils.readable_and_list(["biking"])
+    "biking"
+
+    iex> OpenBookWeb.ViewUtils.readable_and_list(["biking", "climbing"])
+    "biking and climbing"
+
+    iex> OpenBookWeb.ViewUtils.readable_and_list(["biking", "climbing", "swimming"])
+    "climbing, swimming, and biking"
   """
   def readable_and_list([]), do: ""
   def readable_and_list([single_string]), do: single_string
