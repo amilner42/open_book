@@ -3,7 +3,7 @@ defmodule OpenBookWeb.ViewUtils do
   A place to keep utils helpful for views.
   """
 
-  @doc """
+  @doc ~S"""
   Conditionally add classes.
 
   ## Examples:
