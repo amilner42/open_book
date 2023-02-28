@@ -46,8 +46,8 @@ defmodule OpenBookWeb.HomeLive do
     # Top Bar Tab
 
     selected_top_bar_tab =
-      if params["stbt"] in @top_bar_tabs do
-        params["stbt"]
+      if (tab = params["stbt"]) in @top_bar_tabs do
+        tab
       else
         @top_bar_book_tab
       end
