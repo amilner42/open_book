@@ -18,12 +18,21 @@ The project is developed with [Postgres](https://www.postgresql.org/), [Elixir](
 #### Setup
 
   * Install correct Elixir/Erlang versions in `.tool_versions` with `asdf install`.
-  * Fill in environment variables in `.env-template`.
+  * Copy `.env-template` to `.env` and fill in environment variables. Then, `source .env` to set in shell.
   * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.setup`
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+  * Assuming you already have Postgres installed, create and migrate your database with `mix ecto.setup`.
+  * Start Phoenix endpoint with `mix phx.server` or inside a REPL with `iex -S mix phx.server`
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+
+#### Tests
+
+ * Run all tests with `mix test`
+ * Run a specific test with `mix test test/open_book_web/view_utils_test.exs`
+ * This project takes advantage of
+   [elixir doctests](https://elixir-lang.org/getting-started/mix-otp/docs-tests-and-with.html#doctests) which are an
+   easy way to write tests in documentation. Refer to
+   [view utils](https://github.com/amilner42/open_book/blob/main/lib/open_book_web/view_utils.ex) to see an example.
 
 ### Production
 
