@@ -49,7 +49,7 @@ defmodule OpenBookWeb.HomeLive do
       if params["stbt"] in @top_bar_tabs do
         params["stbt"]
       else
-        @top_bar_stats_tab
+        @top_bar_book_tab
       end
 
     # Top Bar Tab Required Nested Data
