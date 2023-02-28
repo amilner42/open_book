@@ -185,9 +185,9 @@ defmodule OpenBookWeb.ExerciseLogLive do
       <% true -> %>
         <p class="pt-0 pb-4 has-text-centered">
           <span>
-            <%=
+            I did <%=
               Fitness.human_readable_exercise_selection(
-                @selected_exercise_category,
+                @selected_exercise_category.name,
                 @selected_intensity_level,
                 @selected_exercise_measurement
               )

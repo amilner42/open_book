@@ -26,17 +26,17 @@ defmodule OpenBook.Fitness.ExerciseCategory do
 
   ## Helpers
 
-  def human_readable_exercise_selection(exercise_category, intensity_level, exercise_measurement) do
-    hr_exercise_name = String.downcase(exercise_category.name)
+  def human_readable_exercise_selection(exercise_category_name, intensity_level, exercise_measurement) do
+    hr_exercise_name = String.downcase(exercise_category_name)
 
     if intensity_level do
-      human_readable_intensity_level(intensity_level)
       hr_duration = human_readable_minutes(exercise_measurement)
-      hr_intensity_level = human_readable_intensity_level(intensity_level)
+      # String interp here to allow either atom/string for intensity level.
+      hr_intensity_level = human_readable_intensity_level("#{intensity_level}")
 
-      "I did #{hr_duration} of #{hr_intensity_level} #{hr_exercise_name}"
+      "#{hr_duration} of #{hr_intensity_level} #{hr_exercise_name}"
     else
-      "I did #{exercise_measurement} #{hr_exercise_name}"
+      "#{exercise_measurement} #{hr_exercise_name}"
     end
   end
 

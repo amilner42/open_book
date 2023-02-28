@@ -12,7 +12,7 @@ defmodule OpenBook.Fitness do
 
   defdelegate human_readable_nutrition_and_calorie_selection(category_name, approx_calorie_count), to: NutritionCategory
 
-  defdelegate human_readable_exercise_selection(exercise_category, intensity_level, exercise_measurement),
+  defdelegate human_readable_exercise_selection(exercise_category_name, intensity_level, exercise_measurement),
     to: ExerciseCategory
 
   defdelegate intensity_levels(), to: ExerciseEntry
@@ -57,11 +57,11 @@ defmodule OpenBook.Fitness do
 
   # DB Queries
 
-  def fetch_nutrition_and_exercise_entries_and_friend_ids(
+  def fetch_nutrition_and_exercise_entries_and_friends(
         by_user_id,
         params = %{from_local_datetime: _, to_local_datetime: _}
       ) do
-    LL.info_event("fetch_nutrition_and_exercise_entries_and_friend_ids", Map.merge(params, %{by_user_id: by_user_id}))
+    LL.info_event("fetch_nutrition_and_exercise_entries_and_friends", Map.merge(params, %{by_user_id: by_user_id}))
 
     db_tasks = [
       Task.async(fn -> fetch_nutrition_entries_and_friend_ids(by_user_id, params) end),
@@ -71,7 +71,12 @@ defmodule OpenBook.Fitness do
     [{nutrition_open_book_friend_ids, nutrition_entries}, {exercise_open_book_friend_ids, exercise_entries}] =
       Task.await_many(db_tasks)
 
+    all_friend_ids = nutrition_open_book_friend_ids ++ exercise_open_book_friend_ids
+
+    friends = Accounts.get_users(all_friend_ids)
+
     %{
+      friends: friends,
       nutrition_open_book_friend_ids: nutrition_open_book_friend_ids,
       nutrition_entries: nutrition_entries,
       exercise_open_book_friend_ids: exercise_open_book_friend_ids,
@@ -83,6 +88,12 @@ defmodule OpenBook.Fitness do
     from(nc in NutritionCategory)
     |> QB.ordered_by(asc: :id)
     |> Repo.all()
+  end
+
+  def fetch_all_exercise_category_names_by_id() do
+    Enum.reduce(fetch_all_exercise_categories(), %{}, fn %{id: id, name: name}, result_acc ->
+      Map.put(result_acc, id, name)
+    end)
   end
 
   def fetch_all_exercise_categories() do

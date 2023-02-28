@@ -8,6 +8,7 @@ defmodule OpenBookWeb.HomeLive do
 
   alias OpenBook.Accounts
   alias OpenBook.DateHelpers
+  alias OpenBook.Fitness
   alias OpenBook.LittleLogger, as: LL
   alias OpenBookWeb.ExerciseLogLive
   alias OpenBookWeb.NutritionLogLive
@@ -70,6 +71,8 @@ defmodule OpenBookWeb.HomeLive do
   def handle_params_live(params, _url, socket) do
     LL.info_event("handle_params_live", params)
 
+    current_user = socket.assigns.user
+
     # Params
     socket =
       socket
@@ -89,8 +92,10 @@ defmodule OpenBookWeb.HomeLive do
     socket =
       case selected_top_bar_tab do
         @top_bar_book_tab ->
+          book_daily_pages = get_book_daily_pages(current_user, Fitness.fetch_all_exercise_category_names_by_id())
+
           socket
-          |> assign(:book_daily_pages, @mock_book_daily_pages)
+          |> assign(:book_daily_pages, book_daily_pages)
 
         _ ->
           socket
@@ -168,7 +173,7 @@ defmodule OpenBookWeb.HomeLive do
               <div class="pb-4" style="line-height: 20px;">
                 <%= {cal_summary, _} = day.my_summary; cal_summary %>
               </div>
-              <%= for {summary, _} <- day.summary_by_friend_display_name do %>
+              <%= for {summary, _} <- day.friend_summaries do %>
               <div class="level is-mobile pl-2 pb-0 mb-0">
                 <div class="level-left">
                   <div class="level-item mr-1">
@@ -207,7 +212,7 @@ defmodule OpenBookWeb.HomeLive do
               <div class="pb-4" style="line-height: 20px;">
                 <%= {_, exercise_summary} = day.my_summary; exercise_summary %>
               </div>
-              <%= for {_, summary} <- day.summary_by_friend_display_name do %>
+              <%= for {_, summary} <- day.friend_summaries do %>
               <div class="level is-mobile pl-2 pb-0 mb-2">
                 <div class="level-left">
                   <div class="level-item mr-2">
@@ -242,6 +247,184 @@ defmodule OpenBookWeb.HomeLive do
   end
 
   # Private
+
+  ## Helpers
+
+  # Fetch ~30 days of history for the book tab.
+  #
+  # Structure:
+  #   [
+  #     %{
+  #       date: ~D[...],
+  #       my_summary: {"You didn't log any nutrition.", "You didn't exercise."},
+  #       friend_summaries: [
+  #         {"Charlie had 2000 calories", "Charlie didn't exercise."},
+  #         {"Robin had 2500 calories.", "Robin did an hour of intense cardio and 45 push-ups."}
+  #       ]
+  #     },
+  #     ...
+  #   ]
+  defp get_book_daily_pages(current_user, all_exercise_category_names_by_id) do
+    # TODO(Arie): timezone-support
+    naive_date_time_end_of_today =
+      DateTime.now!("America/Los_Angeles")
+      |> DateTime.to_naive()
+      |> DateHelpers.naive_end_of_day()
+
+    naive_date_time_start_of_thirty_days_ago =
+      naive_date_time_end_of_today
+      |> NaiveDateTime.add(-30, :day)
+      |> DateHelpers.naive_start_of_day()
+
+    nutrition_and_exercise_entries_and_friends =
+      Fitness.fetch_nutrition_and_exercise_entries_and_friends(current_user.id, %{
+        from_local_datetime: naive_date_time_start_of_thirty_days_ago,
+        to_local_datetime: naive_date_time_end_of_today
+      })
+
+    compressed_nutrition_and_exercise_entries =
+      compress_nutrition_and_exercise_entries(nutrition_and_exercise_entries_and_friends)
+
+    date_range =
+      Date.range(
+        NaiveDateTime.to_date(naive_date_time_end_of_today),
+        NaiveDateTime.to_date(naive_date_time_start_of_thirty_days_ago)
+      )
+
+    for date <- date_range do
+      maybe_my_calories =
+        get_in(compressed_nutrition_and_exercise_entries, [date, current_user.id, :total_calorie_estimate])
+
+      readable_calorie_description = get_readable_calorie_description("I", maybe_my_calories)
+
+      measurement_by_exercise_category_id_and_intensity_tuple =
+        get_in(compressed_nutrition_and_exercise_entries, [
+          date,
+          current_user.id,
+          :measurement_by_exercise_category_id_and_intensity_tuple
+        ])
+
+      readable_exercise_description =
+        get_readable_exercise_description(
+          "I",
+          measurement_by_exercise_category_id_and_intensity_tuple,
+          all_exercise_category_names_by_id
+        )
+
+      %{
+        date: date,
+        my_summary: {readable_calorie_description, readable_exercise_description},
+        friend_summaries: [
+          {"Charlie had 2000 calories", "Charlie did an hour of intense cardio and 45 push-ups."}
+        ]
+      }
+    end
+  end
+
+  # Returns the following nested map structure:
+  #
+  # [
+  #   %{
+  #     <date> => %{
+  #       <user_id> => %{
+  #         measurement_by_exercise_category_id_and_intensity_tuple: %{
+  #           {13, :light} => 20,
+  #           {14, :intense} => 60,
+  #           {14, :light} => 20,
+  #           {21, nil} => 8
+  #         },
+  #         total_calorie_estimate: 1500
+  #       }
+  #     }
+  #   },
+  #   ...
+  # ]
+  defp compress_nutrition_and_exercise_entries(%{
+         nutrition_entries: nutrition_entries,
+         exercise_entries: exercise_entries
+       }) do
+    result = %{}
+    default_data = %{total_calorie_estimate: 0, measurement_by_exercise_category_id_and_intensity_tuple: %{}}
+
+    # Merge in nutrition entries.
+    result =
+      Enum.reduce(nutrition_entries, result, fn %{
+                                                  local_datetime: local_datetime,
+                                                  user_id: user_id,
+                                                  calorie_estimate: calorie_estimate
+                                                },
+                                                result_acc ->
+        date = NaiveDateTime.to_date(local_datetime)
+
+        update_in(result_acc, [Access.key(date, %{}), user_id], fn maybe_current_value ->
+          current_value = maybe_current_value || default_data
+          new_total_calorie_estimate = current_value.total_calorie_estimate + calorie_estimate
+
+          %{current_value | total_calorie_estimate: new_total_calorie_estimate}
+        end)
+      end)
+
+    # Merge in exercise entries.
+    result =
+      Enum.reduce(exercise_entries, result, fn %{
+                                                 local_datetime: local_datetime,
+                                                 user_id: user_id,
+                                                 exercise_category_id: exercise_category_id,
+                                                 intensity_level: intensity_level,
+                                                 measurement: measurement
+                                               },
+                                               result_acc ->
+        date = NaiveDateTime.to_date(local_datetime)
+
+        update_in(result_acc, [Access.key(date, %{}), user_id], fn maybe_current_value ->
+          current_value = maybe_current_value || default_data
+
+          new_measurement_by_exercise_category_id_and_intensity_tuple =
+            current_value.measurement_by_exercise_category_id_and_intensity_tuple
+            |> Map.put_new({exercise_category_id, intensity_level}, 0)
+            |> Map.update!({exercise_category_id, intensity_level}, fn total_measurement ->
+              total_measurement + measurement
+            end)
+
+          %{
+            current_value
+            | measurement_by_exercise_category_id_and_intensity_tuple:
+                new_measurement_by_exercise_category_id_and_intensity_tuple
+          }
+        end)
+      end)
+
+    result
+  end
+
+  ### Readablity Helpers
+
+  defp get_readable_calorie_description(who, nil), do: "#{who} did not record my nutrition."
+  defp get_readable_calorie_description(who, 0), do: "#{who} did not record my nutrition."
+  defp get_readable_calorie_description(who, calorie_estimate), do: "#{who} had around #{calorie_estimate} calories."
+
+  defp get_readable_exercise_description(who, nil, _all_exercise_category_names_by_id), do: "#{who} did not exercise."
+
+  defp get_readable_exercise_description(
+         who,
+         measurement_by_exercise_category_id_and_intensity_tuple,
+         all_exercise_category_names_by_id
+       ) do
+    if(measurement_by_exercise_category_id_and_intensity_tuple == %{}) do
+      get_readable_exercise_description(who, nil, all_exercise_category_names_by_id)
+    else
+      readable_exercise_segments =
+        Enum.map(measurement_by_exercise_category_id_and_intensity_tuple, fn {{exercise_category_id, intensity_level},
+                                                                              measurement} ->
+          exercise_category_name = Map.fetch!(all_exercise_category_names_by_id, exercise_category_id)
+          Fitness.human_readable_exercise_selection(exercise_category_name, intensity_level, measurement)
+        end)
+
+      readable_exercise_string = ViewUtils.readable_and_list(readable_exercise_segments)
+
+      "#{who} did #{readable_exercise_string}."
+    end
+  end
 
   ## Markdown
 

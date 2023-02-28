@@ -17,4 +17,12 @@ defmodule OpenBookWeb.ViewUtils do
       end
     end)
   end
+
+  def readable_and_list([]), do: ""
+  def readable_and_list([single_string]), do: single_string
+  def readable_and_list([first_string, second_string]), do: "#{first_string} and #{second_string}"
+
+  def readable_and_list([first_string | rest_strings]) do
+    "#{Enum.join(rest_strings, ", ")}, and #{first_string}"
+  end
 end

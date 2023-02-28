@@ -22,6 +22,7 @@ defmodule IexHelpers do
       alias OpenBook.Accounts.Friend
       alias OpenBook.Accounts.User
       alias OpenBook.Accounts.VerificationCode
+      alias OpenBook.DateHelpers
       alias OpenBook.Fitness
       alias OpenBook.Fitness.ExerciseCategory
       alias OpenBook.Fitness.NutritionCategory

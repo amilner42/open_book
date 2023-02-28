@@ -34,6 +34,11 @@ defmodule OpenBook.Accounts do
     Repo.get(User, user_id)
   end
 
+  def get_users(user_ids) do
+    from(u in User, where: u.id in ^user_ids)
+    |> Repo.all()
+  end
+
   def get_exercise_open_book_friend_id_mapset(by_user_id) do
     from(f in Friend, select: [f.user_1_id, f.user_2_id])
     |> friendship_involves_user_id(by_user_id)

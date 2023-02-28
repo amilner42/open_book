@@ -19,4 +19,12 @@ defmodule OpenBook.DateHelpers do
         "#{Calendar.strftime(other_date, "%A, %b %d")}"
     end
   end
+
+  def naive_start_of_day(naive_date_time) do
+    %{naive_date_time | hour: 0, minute: 0, second: 0}
+  end
+
+  def naive_end_of_day(naive_date_time) do
+    %{naive_date_time | hour: 23, minute: 59, second: 59}
+  end
 end
