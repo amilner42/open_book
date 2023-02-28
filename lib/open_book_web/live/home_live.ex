@@ -57,10 +57,11 @@ defmodule OpenBookWeb.HomeLive do
     socket =
       case selected_top_bar_tab do
         @top_bar_book_tab ->
-          book_daily_pages = get_book_daily_pages(current_user, Fitness.fetch_all_exercise_category_names_by_id())
-
-          socket
-          |> assign(:book_daily_pages, book_daily_pages)
+          socket =
+            socket
+            |> assign_new(:book_daily_pages, fn ->
+              get_book_daily_pages(current_user, Fitness.fetch_all_exercise_category_names_by_id())
+            end)
 
         _ ->
           socket
