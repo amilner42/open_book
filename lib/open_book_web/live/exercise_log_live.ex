@@ -11,7 +11,7 @@ defmodule OpenBookWeb.ExerciseLogLive do
   alias OpenBook.Fitness
   alias OpenBook.LittleLogger, as: LL
 
-  alias OpenBookWeb.FeedLive
+  alias OpenBookWeb.HomeLive
 
   def mount_live(_params, %{"user_id" => user_id}, socket) do
     LL.metadata_add_current_user_id(user_id)
@@ -185,9 +185,9 @@ defmodule OpenBookWeb.ExerciseLogLive do
       <% true -> %>
         <p class="pt-0 pb-4 has-text-centered">
           <span>
-            <%=
+            I did <%=
               Fitness.human_readable_exercise_selection(
-                @selected_exercise_category,
+                @selected_exercise_category.name,
                 @selected_intensity_level,
                 @selected_exercise_measurement
               )
@@ -240,8 +240,7 @@ defmodule OpenBookWeb.ExerciseLogLive do
 
     Fitness.insert_new_exercise_entry!(user.id, params)
 
-    # @top_bar_history_tab
-    to = Routes.live_path(OpenBookWeb.Endpoint, FeedLive, %{stbt: "history"})
+    to = Routes.live_path(OpenBookWeb.Endpoint, HomeLive, %{stbt: "book"})
 
     socket =
       socket

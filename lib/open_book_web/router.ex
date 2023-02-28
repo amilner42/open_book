@@ -36,7 +36,7 @@ defmodule OpenBookWeb.Router do
 
     live("/log/exercise", ExerciseLogLive)
     live("/log/nutrition", NutritionLogLive)
-    live("/feed", FeedLive)
+    live("/home", HomeLive)
 
     # Session Routes
     get("/logout", SessionController, :delete)

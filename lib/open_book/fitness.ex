@@ -1,6 +1,7 @@
 defmodule OpenBook.Fitness do
   import Ecto.Query
 
+  alias OpenBook.Accounts
   alias OpenBook.Fitness.ExerciseCategory
   alias OpenBook.Fitness.ExerciseEntry
   alias OpenBook.Fitness.NutritionCategory
@@ -11,7 +12,7 @@ defmodule OpenBook.Fitness do
 
   defdelegate human_readable_nutrition_and_calorie_selection(category_name, approx_calorie_count), to: NutritionCategory
 
-  defdelegate human_readable_exercise_selection(exercise_category, intensity_level, exercise_measurement),
+  defdelegate human_readable_exercise_selection(exercise_category_name, intensity_level, exercise_measurement),
     to: ExerciseCategory
 
   defdelegate intensity_levels(), to: ExerciseEntry
@@ -54,7 +55,34 @@ defmodule OpenBook.Fitness do
     |> Repo.insert!()
   end
 
-  ## DB Queries
+  # DB Queries
+
+  def fetch_nutrition_and_exercise_entries_and_friends(
+        by_user_id,
+        params = %{from_local_datetime: _, to_local_datetime: _}
+      ) do
+    LL.info_event("fetch_nutrition_and_exercise_entries_and_friends", Map.merge(params, %{by_user_id: by_user_id}))
+
+    db_tasks = [
+      Task.async(fn -> fetch_nutrition_entries_and_friend_ids(by_user_id, params) end),
+      Task.async(fn -> fetch_exercise_entries_and_friend_ids(by_user_id, params) end)
+    ]
+
+    [{nutrition_open_book_friend_ids, nutrition_entries}, {exercise_open_book_friend_ids, exercise_entries}] =
+      Task.await_many(db_tasks)
+
+    all_friend_ids = nutrition_open_book_friend_ids ++ exercise_open_book_friend_ids
+
+    friend_by_id = Accounts.get_users_as_map(all_friend_ids)
+
+    %{
+      friend_by_id: friend_by_id,
+      nutrition_open_book_friend_ids: nutrition_open_book_friend_ids,
+      nutrition_entries: nutrition_entries,
+      exercise_open_book_friend_ids: exercise_open_book_friend_ids,
+      exercise_entries: exercise_entries
+    }
+  end
 
   def fetch_all_nutrition_categories() do
     from(nc in NutritionCategory)
@@ -62,9 +90,67 @@ defmodule OpenBook.Fitness do
     |> Repo.all()
   end
 
+  def fetch_all_exercise_category_names_by_id() do
+    Enum.reduce(fetch_all_exercise_categories(), %{}, fn %{id: id, name: name}, result_acc ->
+      Map.put(result_acc, id, name)
+    end)
+  end
+
   def fetch_all_exercise_categories() do
     from(ec in ExerciseCategory)
     |> QB.ordered_by(asc: :id)
     |> Repo.all()
+  end
+
+  # Private
+
+  ## DB Queries
+
+  defp fetch_nutrition_entries_and_friend_ids(
+         by_user_id,
+         params = %{
+           from_local_datetime: from_local_datetime,
+           to_local_datetime: to_local_datetime
+         }
+       ) do
+    LL.info_event("fetch_nutrition_entries_and_friend_ids", Map.merge(params, %{by_user_id: by_user_id}))
+
+    friend_ids =
+      Accounts.get_nutrition_open_book_friend_id_mapset(by_user_id)
+      |> MapSet.to_list()
+
+    nutrition_entries =
+      from(ne in NutritionEntry)
+      |> QB.with_user_id([by_user_id | friend_ids])
+      |> QB.gte_local_datetime(from_local_datetime)
+      |> QB.lte_local_datetime(to_local_datetime)
+      |> QB.ordered_by(desc: :local_datetime)
+      |> Repo.all()
+
+    {friend_ids, nutrition_entries}
+  end
+
+  defp fetch_exercise_entries_and_friend_ids(
+         by_user_id,
+         params = %{
+           from_local_datetime: from_local_datetime,
+           to_local_datetime: to_local_datetime
+         }
+       ) do
+    LL.info_event("fetch_exercise_entries_and_friend_ids", Map.merge(params, %{by_user_id: by_user_id}))
+
+    friend_ids =
+      Accounts.get_exercise_open_book_friend_id_mapset(by_user_id)
+      |> MapSet.to_list()
+
+    exercise_entries =
+      from(ee in ExerciseEntry)
+      |> QB.with_user_id([by_user_id | friend_ids])
+      |> QB.gte_local_datetime(from_local_datetime)
+      |> QB.lte_local_datetime(to_local_datetime)
+      |> QB.ordered_by(desc: :local_datetime)
+      |> Repo.all()
+
+    {friend_ids, exercise_entries}
   end
 end
