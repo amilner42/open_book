@@ -60,3 +60,10 @@ In production we use [logflare](logflare.app) to retain and analyze our logs. Th
 
 You can enable logging to logflare in dev (to test logs are as expected). Refer to .env-template to see the ENV variable
 flag to flip. The dev dashboard is [here](https://logflare.app/sources/25347).
+
+You can search in logflare with Logflare Query Language, eg:
+
+ * `m.level:"info"`
+ * `m.level:"error"`
+ * `"[EVENT]"`
+ * `"[EVENT]" m.current_user:<some_user_id>`
