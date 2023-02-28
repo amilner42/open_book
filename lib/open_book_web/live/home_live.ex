@@ -1,6 +1,6 @@
 defmodule OpenBookWeb.HomeLive do
   @moduledoc """
-  The LiveView for the feed page which is essentially the home page, showing a list of
+  The LiveView for the core home page.
   """
   use OpenBookWeb, :live_view_connected
 
