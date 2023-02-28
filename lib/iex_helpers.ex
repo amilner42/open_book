@@ -19,6 +19,7 @@ defmodule IexHelpers do
       alias OpenBook.Repo
 
       alias OpenBook.Accounts
+      alias OpenBook.Accounts.Friend
       alias OpenBook.Accounts.User
       alias OpenBook.Accounts.VerificationCode
       alias OpenBook.Fitness
