@@ -39,6 +39,13 @@ defmodule OpenBook.Accounts do
     |> Repo.all()
   end
 
+  def get_users_as_map(user_ids) do
+    get_users(user_ids)
+    |> Enum.reduce(%{}, fn user, result_acc ->
+      Map.put(result_acc, user.id, user)
+    end)
+  end
+
   def get_exercise_open_book_friend_id_mapset(by_user_id) do
     from(f in Friend, select: [f.user_1_id, f.user_2_id])
     |> friendship_involves_user_id(by_user_id)

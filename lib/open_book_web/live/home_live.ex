@@ -19,41 +19,6 @@ defmodule OpenBookWeb.HomeLive do
   @top_bar_friends_tab "friends"
   @top_bar_tabs [@top_bar_stats_tab, @top_bar_book_tab, @top_bar_friends_tab]
 
-  @mock_book_daily_pages [
-    %{
-      date: ~D[2023-02-26],
-      my_summary: {"You didn't log any nutrition.", "You didn't exercise."},
-      summary_by_friend_display_name: [
-        {"Charlie had 2000 calories", "Charlie didn't exercise."},
-        {"Robin had 2500 calories.", "Robin didn't exercise."}
-      ]
-    },
-    %{
-      date: ~D[2023-02-25],
-      my_summary: {"You had 1900 calories.", "You did 1 hour 15 min intense cardio and 22 pushups."},
-      summary_by_friend_display_name: [
-        {"Charlie had 2000 calories", "Charlie did a 30 min casual bike."},
-        {"", "Robin did 90 minutes"}
-      ]
-    },
-    %{
-      date: ~D[2023-02-24],
-      my_summary: {"", "You did 1 hour 15 min intense cardio and 22 pushups."},
-      summary_by_friend_display_name: [
-        {"Charlie had 2000 calories", "Charlie did a 30 min casual bike."},
-        {"Robin had 2500 calories.", "Robin did 90 minute intense cardio"}
-      ]
-    },
-    %{
-      date: ~D[2023-02-23],
-      my_summary: {"You had 1900 calories.", "You did 1 hour 15 min intense cardio and 22 pushups."},
-      summary_by_friend_display_name: [
-        {"Charlie had 2000 calories", "Charlie did a 30 min casual bike."},
-        {"Robin had 2500 calories.", "Robin did 90 minute intense cardio"}
-      ]
-    }
-  ]
-
   def mount_live(_params, %{"user_id" => user_id}, socket) do
     LL.metadata_add_current_user_id(user_id)
     LL.metadata_add_current_page("HomeLive")
@@ -171,9 +136,9 @@ defmodule OpenBookWeb.HomeLive do
 
             <p class="pt-0 pb-2">
               <div class="pb-4" style="line-height: 20px;">
-                <%= {cal_summary, _} = day.my_summary; cal_summary %>
+                <%= day.my_nutrition_summary %>
               </div>
-              <%= for {summary, _} <- day.friend_summaries do %>
+              <%= for summary <- day.friend_nutrition_summaries do %>
               <div class="level is-mobile pl-2 pb-0 mb-0">
                 <div class="level-left">
                   <div class="level-item mr-1">
@@ -210,9 +175,9 @@ defmodule OpenBookWeb.HomeLive do
             </div>
             <div class="pt-0 pb-2">
               <div class="pb-4" style="line-height: 20px;">
-                <%= {_, exercise_summary} = day.my_summary; exercise_summary %>
+                <%= day.my_exercise_summary %>
               </div>
-              <%= for {_, summary} <- day.friend_summaries do %>
+              <%= for summary <- day.friend_exercise_summaries do %>
               <div class="level is-mobile pl-2 pb-0 mb-2">
                 <div class="level-left">
                   <div class="level-item mr-2">
@@ -256,14 +221,15 @@ defmodule OpenBookWeb.HomeLive do
   #   [
   #     %{
   #       date: ~D[...],
-  #       my_summary: {"You didn't log any nutrition.", "You didn't exercise."},
-  #       friend_summaries: [
-  #         {"Charlie had 2000 calories", "Charlie didn't exercise."},
-  #         {"Robin had 2500 calories.", "Robin did an hour of intense cardio and 45 push-ups."}
-  #       ]
+  #       my_nutrition_summary: "I did not record any nutrition",
+  #       my_exercise_summary: "I did not exercise.",
+  #       friend_nutrition_summaries: ["Charlie had 2000 calories", "Robin did not record any nutrition."]
+  #       friend_exercise_summaries: ["Charlie did not exercise", "Robin did 50 pull-ups."]
   #     },
   #     ...
   #   ]
+  #
+  # TODO(Arie): Function too large.
   defp get_book_daily_pages(current_user, all_exercise_category_names_by_id) do
     # TODO(Arie): timezone-support
     naive_date_time_end_of_today =
@@ -312,11 +278,45 @@ defmodule OpenBookWeb.HomeLive do
         )
 
       %{
+        friend_by_id: friend_by_id,
+        nutrition_open_book_friend_ids: nutrition_open_book_friend_ids,
+        exercise_open_book_friend_ids: exercise_open_book_friend_ids
+      } = nutrition_and_exercise_entries_and_friends
+
+      friend_nutrition_summaries =
+        Enum.map(nutrition_open_book_friend_ids, fn friend_id ->
+          friend_display_name = Map.fetch!(friend_by_id, friend_id).display_name
+
+          maybe_friend_calories =
+            get_in(compressed_nutrition_and_exercise_entries, [date, friend_id, :total_calorie_estimate])
+
+          get_readable_calorie_description(friend_display_name, maybe_friend_calories)
+        end)
+
+      friend_exercise_summaries =
+        Enum.map(exercise_open_book_friend_ids, fn friend_id ->
+          friend_display_name = Map.fetch!(friend_by_id, friend_id).display_name
+
+          measurement_by_exercise_category_id_and_intensity_tuple =
+            get_in(compressed_nutrition_and_exercise_entries, [
+              date,
+              friend_id,
+              :measurement_by_exercise_category_id_and_intensity_tuple
+            ])
+
+          get_readable_exercise_description(
+            friend_display_name,
+            measurement_by_exercise_category_id_and_intensity_tuple,
+            all_exercise_category_names_by_id
+          )
+        end)
+
+      %{
         date: date,
-        my_summary: {readable_calorie_description, readable_exercise_description},
-        friend_summaries: [
-          {"Charlie had 2000 calories", "Charlie did an hour of intense cardio and 45 push-ups."}
-        ]
+        my_nutrition_summary: readable_calorie_description,
+        my_exercise_summary: readable_exercise_description,
+        friend_nutrition_summaries: friend_nutrition_summaries,
+        friend_exercise_summaries: friend_exercise_summaries
       }
     end
   end
@@ -399,8 +399,8 @@ defmodule OpenBookWeb.HomeLive do
 
   ### Readablity Helpers
 
-  defp get_readable_calorie_description(who, nil), do: "#{who} did not record my nutrition."
-  defp get_readable_calorie_description(who, 0), do: "#{who} did not record my nutrition."
+  defp get_readable_calorie_description(who, nil), do: "#{who} did not record any nutrition."
+  defp get_readable_calorie_description(who, 0), do: "#{who} did not record any nutrition."
   defp get_readable_calorie_description(who, calorie_estimate), do: "#{who} had around #{calorie_estimate} calories."
 
   defp get_readable_exercise_description(who, nil, _all_exercise_category_names_by_id), do: "#{who} did not exercise."

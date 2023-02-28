@@ -73,10 +73,10 @@ defmodule OpenBook.Fitness do
 
     all_friend_ids = nutrition_open_book_friend_ids ++ exercise_open_book_friend_ids
 
-    friends = Accounts.get_users(all_friend_ids)
+    friend_by_id = Accounts.get_users_as_map(all_friend_ids)
 
     %{
-      friends: friends,
+      friend_by_id: friend_by_id,
       nutrition_open_book_friend_ids: nutrition_open_book_friend_ids,
       nutrition_entries: nutrition_entries,
       exercise_open_book_friend_ids: exercise_open_book_friend_ids,
