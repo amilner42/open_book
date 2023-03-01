@@ -1,8 +1,5 @@
 <div class="level is-mobile p-3">
     <div class="level-left">
-        <div class="level-item">
-
-        </div>
     </div>
 
     <div class="level-right has_text_dark_blue">
@@ -73,3 +70,16 @@
         </div>
     </div>
 </div>
+
+<%= if @current_user  do %>
+    <div class="new_entry_footer">
+        <div class="buttons is-right pb-4 pr-4">
+            <%= link(to: "/home", class: "button is-light has_border_grey has_text_dark_blue b-0") do %>
+            <span class="icon">
+                <i class="fas fa-book"></i>
+            </span>
+            <span>Back to my OpenBook</span>
+            <% end %>
+        </div>
+    </div>
+<% end %>
