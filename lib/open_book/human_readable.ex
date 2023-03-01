@@ -1,6 +1,6 @@
 defmodule OpenBook.HumanReadable do
   @moduledoc """
-  Misc. functions to help with making things human-readable.
+  Some miscellaneous helpers to make things human-readable.
   """
 
   @doc ~S"""

@@ -1,6 +1,6 @@
 defmodule OpenBook.DateHelpers do
   @moduledoc """
-  Some miscellaneous date helpers.
+  Some miscellaneous helpers to work with dates.
   """
 
   @doc ~S"""
