@@ -3,6 +3,6 @@ defmodule OpenBookWeb.PageControllerTest do
 
   test "GET /", %{conn: conn} do
     conn = get(conn, "/")
-    assert html_response(conn, 200) =~ "Stay fit with friends"
+    assert html_response(conn, 200) =~ "Stay fit with close friends"
   end
 end

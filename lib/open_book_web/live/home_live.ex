@@ -6,10 +6,13 @@ defmodule OpenBookWeb.HomeLive do
 
   import Phoenix.Component
 
+  alias Phoenix.LiveView.JS
+
   alias OpenBook.Accounts
   alias OpenBook.DateHelpers
   alias OpenBook.Fitness
   alias OpenBook.LittleLogger, as: LL
+  alias OpenBook.Share
   alias OpenBookWeb.ExerciseLogLive
   alias OpenBookWeb.NutritionLogLive
   alias OpenBookWeb.ViewUtils
@@ -29,6 +32,7 @@ defmodule OpenBookWeb.HomeLive do
     socket =
       socket
       |> assign(:user, user)
+      |> assign(:active_share_day_modal_data, nil)
 
     {:ok, socket}
   end
@@ -61,11 +65,10 @@ defmodule OpenBookWeb.HomeLive do
     socket =
       case selected_top_bar_tab do
         @top_bar_book_tab ->
-          socket =
-            socket
-            |> assign_new(:book_daily_pages, fn ->
-              get_book_daily_pages(current_user, Fitness.fetch_all_exercise_category_names_by_id())
-            end)
+          socket
+          |> assign_new(:book_daily_pages, fn ->
+            get_book_daily_pages(current_user, Fitness.fetch_all_exercise_category_names_by_id())
+          end)
 
         _ ->
           socket
@@ -95,6 +98,39 @@ defmodule OpenBookWeb.HomeLive do
     {:noreply, socket}
   end
 
+  def handle_event(
+        "activate_share_day_modal",
+        params = %{"date" => date},
+        socket
+      ) do
+    LL.info_event("handle_event", Map.merge(params, %{event_name: :activate_share_day_modal}))
+
+    current_user = socket.assigns.user
+
+    dsl = Share.generate_new_day_stats_link!(current_user.id, date)
+    dsl_share_link = Routes.share_url(socket, :share_day_stats, dsl.code)
+
+    socket =
+      socket
+      |> assign(:active_share_day_modal_data, dsl_share_link)
+
+    {:noreply, socket}
+  end
+
+  def handle_event(
+        "deactivate_share_day_modal",
+        params,
+        socket
+      ) do
+    LL.info_event("handle_event", Map.merge(params, %{event_name: :deactivate_share_day_modal}))
+
+    socket =
+      socket
+      |> assign(:active_share_day_modal_data, nil)
+
+    {:noreply, socket}
+  end
+
   ## Render
 
   def render(assigns) do
@@ -110,11 +146,49 @@ defmodule OpenBookWeb.HomeLive do
         </div>
 
       <% "book" -> %>
+        <div class={ViewUtils.class_list("modal", %{"is-active" => @active_share_day_modal_data != nil})}>
+          <div
+            class="modal-background"
+            phx-click="deactivate_share_day_modal"
+          >
+          </div>
+          <div class="modal-content">
+            <div class="box m-3">
+              Share your progress with close friends
+
+              <div class="mb-4 mt-3">
+                <a
+                  href={@active_share_day_modal_data}
+                  class="has-text-link is-size-7"
+                  target="_blank"
+                >
+                  <%= @active_share_day_modal_data %>
+                </a>
+              </div>
+
+              <div class="buttons are-small has-addons is-right">
+                <button
+                  class="button is-small is-rounded"
+                  phx-click={JS.dispatch("phx:copy")}
+                  data-text_to_copy={@active_share_day_modal_data}
+                >
+                  <span class="icon">
+                    <i class="fas fa-link"></i>
+                  </span>
+
+                  <span>Copy Link</span>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
         <div>
           <%= for day <- @book_daily_pages do %>
           <div class="mb-4 daily-entry">
             <div class="is-capitalized is-size-4 has-text-centered pb-4 has-text-weight-bold">
-              <%= DateHelpers.readable_date(DateTime.now!("America/Los_Angeles"), day.date, :human_relative_lingo_with_prefix) %>
+              <%= DateHelpers.readable_date(DateTime.now!("America/Los_Angeles"), day.date, :human_relative_lingo) %>
             </div>
 
             <div class="level is-mobile pb-0 mb-2">
@@ -195,6 +269,20 @@ defmodule OpenBookWeb.HomeLive do
               </div>
               <% end %>
             </div>
+            <div class="buttons has-addons is-right">
+              <button
+                class="button is-small is-dark is-rounded b-0 aligned-right"
+                phx-click="activate_share_day_modal"
+                phx-value-date={day.date}
+              >
+                <span class="icon">
+                  <i class="fas fa-share-alt"></i>
+                </span>
+                <span>
+                  share
+                </span>
+              </button>
+            </div>
           </div>
           <% end %>
         </div>
@@ -250,7 +338,7 @@ defmodule OpenBookWeb.HomeLive do
       })
 
     compressed_nutrition_and_exercise_entries =
-      compress_nutrition_and_exercise_entries(nutrition_and_exercise_entries_and_friends)
+      Fitness.compress_nutrition_and_exercise_entries(nutrition_and_exercise_entries_and_friends)
 
     date_range =
       Date.range(
@@ -259,22 +347,20 @@ defmodule OpenBookWeb.HomeLive do
       )
 
     for date <- date_range do
-      maybe_my_calories =
-        get_in(compressed_nutrition_and_exercise_entries, [date, current_user.id, :total_calorie_estimate])
-
-      readable_calorie_description = get_readable_calorie_description("I", maybe_my_calories)
-
-      measurement_by_exercise_category_id_and_intensity_tuple =
-        get_in(compressed_nutrition_and_exercise_entries, [
+      readable_calorie_description =
+        Fitness.get_readable_calorie_description(
+          compressed_nutrition_and_exercise_entries,
           date,
           current_user.id,
-          :measurement_by_exercise_category_id_and_intensity_tuple
-        ])
+          "I"
+        )
 
       readable_exercise_description =
-        get_readable_exercise_description(
+        Fitness.get_readable_exercise_description(
+          compressed_nutrition_and_exercise_entries,
+          date,
+          current_user.id,
           "I",
-          measurement_by_exercise_category_id_and_intensity_tuple,
           all_exercise_category_names_by_id
         )
 
@@ -286,28 +372,21 @@ defmodule OpenBookWeb.HomeLive do
 
       friend_nutrition_summaries =
         Enum.map(nutrition_open_book_friend_ids, fn friend_id ->
-          friend_display_name = Map.fetch!(friend_by_id, friend_id).display_name
-
-          maybe_friend_calories =
-            get_in(compressed_nutrition_and_exercise_entries, [date, friend_id, :total_calorie_estimate])
-
-          get_readable_calorie_description(friend_display_name, maybe_friend_calories)
+          Fitness.get_readable_calorie_description(
+            compressed_nutrition_and_exercise_entries,
+            date,
+            friend_id,
+            Map.fetch!(friend_by_id, friend_id).display_name
+          )
         end)
 
       friend_exercise_summaries =
         Enum.map(exercise_open_book_friend_ids, fn friend_id ->
-          friend_display_name = Map.fetch!(friend_by_id, friend_id).display_name
-
-          measurement_by_exercise_category_id_and_intensity_tuple =
-            get_in(compressed_nutrition_and_exercise_entries, [
-              date,
-              friend_id,
-              :measurement_by_exercise_category_id_and_intensity_tuple
-            ])
-
-          get_readable_exercise_description(
-            friend_display_name,
-            measurement_by_exercise_category_id_and_intensity_tuple,
+          Fitness.get_readable_exercise_description(
+            compressed_nutrition_and_exercise_entries,
+            date,
+            friend_id,
+            Map.fetch!(friend_by_id, friend_id).display_name,
             all_exercise_category_names_by_id
           )
         end)
@@ -319,111 +398,6 @@ defmodule OpenBookWeb.HomeLive do
         friend_nutrition_summaries: friend_nutrition_summaries,
         friend_exercise_summaries: friend_exercise_summaries
       }
-    end
-  end
-
-  # Returns the following nested map structure:
-  #
-  # [
-  #   %{
-  #     <date> => %{
-  #       <user_id> => %{
-  #         measurement_by_exercise_category_id_and_intensity_tuple: %{
-  #           {13, :light} => 20,
-  #           {14, :intense} => 60,
-  #           {14, :light} => 20,
-  #           {21, nil} => 8
-  #         },
-  #         total_calorie_estimate: 1500
-  #       }
-  #     }
-  #   },
-  #   ...
-  # ]
-  defp compress_nutrition_and_exercise_entries(%{
-         nutrition_entries: nutrition_entries,
-         exercise_entries: exercise_entries
-       }) do
-    result = %{}
-    default_data = %{total_calorie_estimate: 0, measurement_by_exercise_category_id_and_intensity_tuple: %{}}
-
-    # Merge in nutrition entries.
-    result =
-      Enum.reduce(nutrition_entries, result, fn %{
-                                                  local_datetime: local_datetime,
-                                                  user_id: user_id,
-                                                  calorie_estimate: calorie_estimate
-                                                },
-                                                result_acc ->
-        date = NaiveDateTime.to_date(local_datetime)
-
-        update_in(result_acc, [Access.key(date, %{}), user_id], fn maybe_current_value ->
-          current_value = maybe_current_value || default_data
-          new_total_calorie_estimate = current_value.total_calorie_estimate + calorie_estimate
-
-          %{current_value | total_calorie_estimate: new_total_calorie_estimate}
-        end)
-      end)
-
-    # Merge in exercise entries.
-    result =
-      Enum.reduce(exercise_entries, result, fn %{
-                                                 local_datetime: local_datetime,
-                                                 user_id: user_id,
-                                                 exercise_category_id: exercise_category_id,
-                                                 intensity_level: intensity_level,
-                                                 measurement: measurement
-                                               },
-                                               result_acc ->
-        date = NaiveDateTime.to_date(local_datetime)
-
-        update_in(result_acc, [Access.key(date, %{}), user_id], fn maybe_current_value ->
-          current_value = maybe_current_value || default_data
-
-          new_measurement_by_exercise_category_id_and_intensity_tuple =
-            current_value.measurement_by_exercise_category_id_and_intensity_tuple
-            |> Map.put_new({exercise_category_id, intensity_level}, 0)
-            |> Map.update!({exercise_category_id, intensity_level}, fn total_measurement ->
-              total_measurement + measurement
-            end)
-
-          %{
-            current_value
-            | measurement_by_exercise_category_id_and_intensity_tuple:
-                new_measurement_by_exercise_category_id_and_intensity_tuple
-          }
-        end)
-      end)
-
-    result
-  end
-
-  ### Readablity Helpers
-
-  defp get_readable_calorie_description(who, nil), do: "#{who} did not record any nutrition."
-  defp get_readable_calorie_description(who, 0), do: "#{who} did not record any nutrition."
-  defp get_readable_calorie_description(who, calorie_estimate), do: "#{who} had around #{calorie_estimate} calories."
-
-  defp get_readable_exercise_description(who, nil, _all_exercise_category_names_by_id), do: "#{who} did not exercise."
-
-  defp get_readable_exercise_description(
-         who,
-         measurement_by_exercise_category_id_and_intensity_tuple,
-         all_exercise_category_names_by_id
-       ) do
-    if(measurement_by_exercise_category_id_and_intensity_tuple == %{}) do
-      get_readable_exercise_description(who, nil, all_exercise_category_names_by_id)
-    else
-      readable_exercise_segments =
-        Enum.map(measurement_by_exercise_category_id_and_intensity_tuple, fn {{exercise_category_id, intensity_level},
-                                                                              measurement} ->
-          exercise_category_name = Map.fetch!(all_exercise_category_names_by_id, exercise_category_id)
-          Fitness.human_readable_exercise_selection(exercise_category_name, intensity_level, measurement)
-        end)
-
-      readable_exercise_string = ViewUtils.readable_and_list(readable_exercise_segments)
-
-      "#{who} did #{readable_exercise_string}."
     end
   end
 

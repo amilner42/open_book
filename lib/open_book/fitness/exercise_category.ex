@@ -23,45 +23,4 @@ defmodule OpenBook.Fitness.ExerciseCategory do
     |> validate_length(:name, min: 3)
     |> validate_inclusion(:measurement_kind, @measurement_kinds)
   end
-
-  ## Helpers
-
-  def human_readable_exercise_selection(exercise_category_name, intensity_level, exercise_measurement) do
-    hr_exercise_name = String.downcase(exercise_category_name)
-
-    if intensity_level do
-      hr_duration = human_readable_minutes(exercise_measurement)
-      # String interp here to allow either atom/string for intensity level.
-      hr_intensity_level = human_readable_intensity_level("#{intensity_level}")
-
-      "#{hr_duration} of #{hr_intensity_level} #{hr_exercise_name}"
-    else
-      "#{exercise_measurement} #{hr_exercise_name}"
-    end
-  end
-
-  # Private
-
-  defp human_readable_intensity_level("light"), do: "light"
-  defp human_readable_intensity_level("regular"), do: ""
-  defp human_readable_intensity_level("intense"), do: "intense"
-
-  defp human_readable_minutes(minutes) do
-    cond do
-      minutes < 60 ->
-        "#{minutes} minutes"
-
-      minutes == 60 ->
-        "an hour"
-
-      minutes < 120 ->
-        "an hour and #{rem(minutes, 60)} minutes"
-
-      rem(minutes, 60) == 0 ->
-        "#{div(minutes, 60)} hours"
-
-      true ->
-        "#{div(minutes, 60)} hours and #{rem(minutes, 60)} minutes"
-    end
-  end
 end

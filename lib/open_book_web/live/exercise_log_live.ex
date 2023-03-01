@@ -9,6 +9,7 @@ defmodule OpenBookWeb.ExerciseLogLive do
 
   alias OpenBook.Accounts
   alias OpenBook.Fitness
+  alias OpenBook.HumanReadable
   alias OpenBook.LittleLogger, as: LL
 
   alias OpenBookWeb.HomeLive
@@ -186,7 +187,7 @@ defmodule OpenBookWeb.ExerciseLogLive do
         <p class="pt-0 pb-4 has-text-centered">
           <span>
             I did <%=
-              Fitness.human_readable_exercise_selection(
+              HumanReadable.human_readable_exercise_selection(
                 @selected_exercise_category.name,
                 @selected_intensity_level,
                 @selected_exercise_measurement

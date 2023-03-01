@@ -6,14 +6,12 @@ defmodule OpenBook.Fitness do
   alias OpenBook.Fitness.ExerciseEntry
   alias OpenBook.Fitness.NutritionCategory
   alias OpenBook.Fitness.NutritionEntry
+  alias OpenBook.HumanReadable
   alias OpenBook.LittleLogger, as: LL
   alias OpenBook.QueryBuilders, as: QB
   alias OpenBook.Repo
 
   defdelegate human_readable_nutrition_and_calorie_selection(category_name, approx_calorie_count), to: NutritionCategory
-
-  defdelegate human_readable_exercise_selection(exercise_category_name, intensity_level, exercise_measurement),
-    to: ExerciseCategory
 
   defdelegate intensity_levels(), to: ExerciseEntry
 
@@ -100,6 +98,148 @@ defmodule OpenBook.Fitness do
     from(ec in ExerciseCategory)
     |> QB.ordered_by(asc: :id)
     |> Repo.all()
+  end
+
+  # Helpers
+
+  @doc ~S"""
+  Compress the passed nutrition & exercise entries.
+
+  ## Examples
+
+  iex> OpenBook.Fitness.compress_nutrition_and_exercise_entries(%{nutrition_entries: [], exercise_entries: []})
+  %{}
+
+  iex> exercise_entries = [
+  ...>      %OpenBook.Fitness.ExerciseEntry{
+  ...>        exercise_category_id: 15,
+  ...>        user_id: 1,
+  ...>        intensity_level: :intense,
+  ...>        measurement: 90,
+  ...>        local_datetime: ~N[2023-02-28 09:52:18]
+  ...>      },
+  ...>      %OpenBook.Fitness.ExerciseEntry{
+  ...>        exercise_category_id: 19,
+  ...>        user_id: 2,
+  ...>        intensity_level: :light,
+  ...>        measurement: 55,
+  ...>        local_datetime: ~N[2023-02-27 20:54:49]
+  ...>      }
+  ...>  ]
+  iex> nutrition_entries = [
+  ...>      %OpenBook.Fitness.NutritionEntry{
+  ...>        nutrition_category_id: 1,
+  ...>        user_id: 1,
+  ...>        calorie_estimate: 300,
+  ...>        local_datetime: ~N[2023-02-28 16:39:29]
+  ...>      },
+  ...>      %OpenBook.Fitness.NutritionEntry{
+  ...>        nutrition_category_id: 1,
+  ...>        user_id: 1,
+  ...>        calorie_estimate: 500,
+  ...>        local_datetime: ~N[2023-02-28 09:52:13]
+  ...>      }
+  ...>   ]
+  iex> OpenBook.Fitness.compress_nutrition_and_exercise_entries(%{
+  ...>   nutrition_entries: nutrition_entries,
+  ...>   exercise_entries: exercise_entries
+  ...> })
+  %{
+      ~D[2023-02-27] => %{2 => %{
+          measurement_by_exercise_category_id_and_intensity_tuple: %{{19, :light} => 55},
+          total_calorie_estimate: 0
+        }
+      },
+      ~D[2023-02-28] => %{1 => %{
+          measurement_by_exercise_category_id_and_intensity_tuple: %{{15, :intense} => 90},
+          total_calorie_estimate: 800
+        }
+      }
+  }
+  """
+  def compress_nutrition_and_exercise_entries(%{
+        nutrition_entries: nutrition_entries,
+        exercise_entries: exercise_entries
+      }) do
+    result = %{}
+    default_data = %{total_calorie_estimate: 0, measurement_by_exercise_category_id_and_intensity_tuple: %{}}
+
+    # Merge in nutrition entries.
+    result =
+      Enum.reduce(nutrition_entries, result, fn %{
+                                                  local_datetime: local_datetime,
+                                                  user_id: user_id,
+                                                  calorie_estimate: calorie_estimate
+                                                },
+                                                result_acc ->
+        date = NaiveDateTime.to_date(local_datetime)
+
+        update_in(result_acc, [Access.key(date, %{}), user_id], fn maybe_current_value ->
+          current_value = maybe_current_value || default_data
+          new_total_calorie_estimate = current_value.total_calorie_estimate + calorie_estimate
+
+          %{current_value | total_calorie_estimate: new_total_calorie_estimate}
+        end)
+      end)
+
+    # Merge in exercise entries.
+    result =
+      Enum.reduce(exercise_entries, result, fn %{
+                                                 local_datetime: local_datetime,
+                                                 user_id: user_id,
+                                                 exercise_category_id: exercise_category_id,
+                                                 intensity_level: intensity_level,
+                                                 measurement: measurement
+                                               },
+                                               result_acc ->
+        date = NaiveDateTime.to_date(local_datetime)
+
+        update_in(result_acc, [Access.key(date, %{}), user_id], fn maybe_current_value ->
+          current_value = maybe_current_value || default_data
+
+          new_measurement_by_exercise_category_id_and_intensity_tuple =
+            current_value.measurement_by_exercise_category_id_and_intensity_tuple
+            |> Map.put_new({exercise_category_id, intensity_level}, 0)
+            |> Map.update!({exercise_category_id, intensity_level}, fn total_measurement ->
+              total_measurement + measurement
+            end)
+
+          %{
+            current_value
+            | measurement_by_exercise_category_id_and_intensity_tuple:
+                new_measurement_by_exercise_category_id_and_intensity_tuple
+          }
+        end)
+      end)
+
+    result
+  end
+
+  def get_readable_calorie_description(compressed_nutrition_and_exercise_entries, date, user_id, who) do
+    maybe_calories = get_in(compressed_nutrition_and_exercise_entries, [date, user_id, :total_calorie_estimate])
+
+    HumanReadable.human_readable_calorie_description(who, maybe_calories)
+  end
+
+  def get_readable_exercise_description(
+        compressed_nutrition_and_exercise_entries,
+        date,
+        user_id,
+        who,
+        all_exercise_category_names_by_id
+      ) do
+    measurement_by_exercise_category_id_and_intensity_tuple =
+      get_in(compressed_nutrition_and_exercise_entries, [
+        date,
+        user_id,
+        :measurement_by_exercise_category_id_and_intensity_tuple
+      ])
+
+    HumanReadable.human_readable_exercise_description(
+      who,
+      measurement_by_exercise_category_id_and_intensity_tuple,
+      all_exercise_category_names_by_id
+    )
   end
 
   # Private
