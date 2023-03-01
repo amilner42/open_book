@@ -65,11 +65,10 @@ defmodule OpenBookWeb.HomeLive do
     socket =
       case selected_top_bar_tab do
         @top_bar_book_tab ->
-          socket =
-            socket
-            |> assign_new(:book_daily_pages, fn ->
-              get_book_daily_pages(current_user, Fitness.fetch_all_exercise_category_names_by_id())
-            end)
+          socket
+          |> assign_new(:book_daily_pages, fn ->
+            get_book_daily_pages(current_user, Fitness.fetch_all_exercise_category_names_by_id())
+          end)
 
         _ ->
           socket
@@ -100,10 +99,10 @@ defmodule OpenBookWeb.HomeLive do
   end
 
   def handle_event(
-    "activate_share_day_modal",
-    params = %{"date" => date},
-    socket
-  ) do
+        "activate_share_day_modal",
+        params = %{"date" => date},
+        socket
+      ) do
     LL.info_event("handle_event", Map.merge(params, %{event_name: :activate_share_day_modal}))
 
     current_user = socket.assigns.user
@@ -119,10 +118,10 @@ defmodule OpenBookWeb.HomeLive do
   end
 
   def handle_event(
-    "deactivate_share_day_modal",
-    params,
-    socket
-  ) do
+        "deactivate_share_day_modal",
+        params,
+        socket
+      ) do
     LL.info_event("handle_event", Map.merge(params, %{event_name: :deactivate_share_day_modal}))
 
     socket =

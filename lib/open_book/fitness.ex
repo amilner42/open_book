@@ -102,24 +102,70 @@ defmodule OpenBook.Fitness do
 
   # Helpers
 
-  # Returns the following nested map structure:
-  #
-  # [
-  #   %{
-  #     <date> => %{
-  #       <user_id> => %{
-  #         measurement_by_exercise_category_id_and_intensity_tuple: %{
-  #           {13, :light} => 20,
-  #           {14, :intense} => 60,
-  #           {14, :light} => 20,
-  #           {21, nil} => 8
-  #         },
-  #         total_calorie_estimate: 1500
-  #       }
-  #     }
-  #   },
-  #   ...
-  # ]
+  @doc ~S"""
+  Compress the passed nutrition & exercise entries.
+
+  ## Examples
+
+  iex> OpenBook.Fitness.compress_nutrition_and_exercise_entries(%{nutrition_entries: [], exercise_entries: []})
+  %{}
+
+  iex> exercise_entries = [
+  ...>      %OpenBook.Fitness.ExerciseEntry{
+  ...>        id: 13,
+  ...>        exercise_category_id: 15,
+  ...>        user_id: 1,
+  ...>        intensity_level: :intense,
+  ...>        measurement: 90,
+  ...>        local_datetime: ~N[2023-02-28 09:52:18],
+  ...>        inserted_at: ~N[2023-02-28 17:52:18],
+  ...>        updated_at: ~N[2023-02-28 17:52:18]
+  ...>      },
+  ...>      %OpenBook.Fitness.ExerciseEntry{
+  ...>        id: 12,
+  ...>        exercise_category_id: 19,
+  ...>        user_id: 2,
+  ...>        intensity_level: :light,
+  ...>        measurement: 55,
+  ...>        local_datetime: ~N[2023-02-27 20:54:49],
+  ...>        inserted_at: ~N[2023-02-28 04:54:49],
+  ...>        updated_at: ~N[2023-02-28 04:54:49]
+  ...>      }
+  ...>  ]
+  iex> nutrition_entries = [
+  ...>      %OpenBook.Fitness.NutritionEntry{
+  ...>        id: 21,
+  ...>        nutrition_category_id: 1,
+  ...>        user_id: 1,
+  ...>        calorie_estimate: 300,
+  ...>        local_datetime: ~N[2023-02-28 16:39:29],
+  ...>        inserted_at: ~N[2023-03-01 00:39:29],
+  ...>        updated_at: ~N[2023-03-01 00:39:29]
+  ...>      },
+  ...>      %OpenBook.Fitness.NutritionEntry{
+  ...>        id: 20,
+  ...>        nutrition_category_id: 1,
+  ...>        user_id: 1,
+  ...>        calorie_estimate: 500,
+  ...>        local_datetime: ~N[2023-02-28 09:52:13],
+  ...>        inserted_at: ~N[2023-02-28 17:52:13],
+  ...>        updated_at: ~N[2023-02-28 17:52:13]
+  ...>      }
+  ...>   ]
+  iex> OpenBook.Fitness.compress_nutrition_and_exercise_entries(%{ nutrition_entries: nutrition_entries, exercise_entries: exercise_entries })
+  %{
+      ~D[2023-02-27] => %{2 => %{
+          measurement_by_exercise_category_id_and_intensity_tuple: %{{19, :light} => 55},
+          total_calorie_estimate: 0
+        }
+      },
+      ~D[2023-02-28] => %{1 => %{
+          measurement_by_exercise_category_id_and_intensity_tuple: %{{15, :intense} => 90},
+          total_calorie_estimate: 800
+        }
+      }
+  }
+  """
   def compress_nutrition_and_exercise_entries(%{
         nutrition_entries: nutrition_entries,
         exercise_entries: exercise_entries
