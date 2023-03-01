@@ -50,3 +50,11 @@ window.liveSocket = liveSocket
 let vh = window.innerHeight * 0.01;
 // Then we set the value in the --vh custom property to the root of the document
 document.documentElement.style.setProperty('--vh', `${vh}px`);
+
+// Refer: https://fly.io/phoenix-files/copy-to-clipboard-with-phoenix-liveview/
+window.addEventListener("phx:copy", (event) => {
+    let text_to_copy = event.target.dataset.text_to_copy;
+    navigator.clipboard.writeText(text_to_copy).then(() => {
+        // copied.
+    })
+})

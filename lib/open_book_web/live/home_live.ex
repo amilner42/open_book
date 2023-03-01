@@ -6,10 +6,13 @@ defmodule OpenBookWeb.HomeLive do
 
   import Phoenix.Component
 
+  alias Phoenix.LiveView.JS
+
   alias OpenBook.Accounts
   alias OpenBook.DateHelpers
   alias OpenBook.Fitness
   alias OpenBook.LittleLogger, as: LL
+  alias OpenBook.Share
   alias OpenBookWeb.ExerciseLogLive
   alias OpenBookWeb.NutritionLogLive
   alias OpenBookWeb.ViewUtils
@@ -29,7 +32,7 @@ defmodule OpenBookWeb.HomeLive do
     socket =
       socket
       |> assign(:user, user)
-      |> assign(:active_share_day_modal, false)
+      |> assign(:active_share_day_modal_data, nil)
 
     {:ok, socket}
   end
@@ -98,14 +101,19 @@ defmodule OpenBookWeb.HomeLive do
 
   def handle_event(
     "activate_share_day_modal",
-    params,
+    params = %{"date" => date},
     socket
   ) do
     LL.info_event("handle_event", Map.merge(params, %{event_name: :activate_share_day_modal}))
 
+    current_user = socket.assigns.user
+
+    dsl = Share.generate_new_day_stats_link!(current_user.id, date)
+    dsl_share_link = Routes.share_url(socket, :share_day_stats, dsl.code)
+
     socket =
       socket
-      |> assign(:active_share_day_modal, true)
+      |> assign(:active_share_day_modal_data, dsl_share_link)
 
     {:noreply, socket}
   end
@@ -119,7 +127,7 @@ defmodule OpenBookWeb.HomeLive do
 
     socket =
       socket
-      |> assign(:active_share_day_modal, false)
+      |> assign(:active_share_day_modal_data, nil)
 
     {:noreply, socket}
   end
@@ -139,7 +147,7 @@ defmodule OpenBookWeb.HomeLive do
         </div>
 
       <% "book" -> %>
-        <div class={ViewUtils.class_list("modal", %{"is-active" => @active_share_day_modal})}>
+        <div class={ViewUtils.class_list("modal", %{"is-active" => @active_share_day_modal_data != nil})}>
           <div
             class="modal-background"
             phx-click="deactivate_share_day_modal"
@@ -147,10 +155,24 @@ defmodule OpenBookWeb.HomeLive do
           </div>
           <div class="modal-content">
             <div class="box m-3">
-              Shares with close friends on/off the platform.
+              Share your progress with close friends
+
+              <div class="mb-4 mt-3">
+                <a
+                  href={@active_share_day_modal_data}
+                  class="has-text-link is-size-7"
+                  target="_blank"
+                >
+                  <%= @active_share_day_modal_data %>
+                </a>
+              </div>
 
               <div class="buttons are-small has-addons is-right">
-                <button class="button is-small is-rounded">
+                <button
+                  class="button is-small is-rounded"
+                  phx-click={JS.dispatch("phx:copy")}
+                  data-text_to_copy={@active_share_day_modal_data}
+                >
                   <span class="icon">
                     <i class="fas fa-link"></i>
                   </span>
@@ -252,6 +274,7 @@ defmodule OpenBookWeb.HomeLive do
               <button
                 class="button is-small is-dark is-rounded b-0 aligned-right"
                 phx-click="activate_share_day_modal"
+                phx-value-date={day.date}
               >
                 <span class="icon">
                   <i class="fas fa-share-alt"></i>
