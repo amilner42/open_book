@@ -7,6 +7,7 @@ defmodule OpenBookWeb.ExerciseLogLive do
   """
   use OpenBookWeb, :live_view_connected
 
+  alias OpenBookWeb.ViewUtils
   alias OpenBook.Accounts
   alias OpenBook.Fitness
   alias OpenBook.HumanReadable
@@ -149,9 +150,17 @@ defmodule OpenBookWeb.ExerciseLogLive do
           <p class="pt-0 pb-4">
             How many?
           </p>
-          <div class="is-flex is-flex-direction-row is-flex-wrap-wrap	">
+          <div class="is-flex is-flex-wrap-wrap">
           <%= for amount_option <- get_amount_options() do %>
-            <div class="tile p-1">
+            <div
+              class={
+                ViewUtils.class_list("p-1", %{
+                    "flex-basis-full" => rem(amount_option, 10) == 0,
+                    "flex-basis-third" => rem(amount_option, 10) != 0
+                  }
+                )
+              }
+            >
               <button
                 class="button is-medium is-light is-fullwidth has_border_grey"
                 phx-click="select_exercise_measurement"
