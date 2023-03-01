@@ -1,4 +1,5 @@
 defmodule IexHelpers do
+  alias OpenBook.Fitness.NutritionCategory
   alias OpenBook.Fitness
   alias OpenBook.Repo
 
@@ -70,5 +71,20 @@ defmodule IexHelpers do
         Fitness.insert_new_nutrition_category!(@manually_in_repl_user_id, params)
       end
     end)
+  end
+
+  # To play around with calorie option defaults for each category.
+  def update_nutriton_category_calorie_selections!() do
+    updates = [{"Meal", 225..2000//25}, {"Drinks", 25..2000//25}, {"Snacks", 25..2000//25}, {"Dessert", 25..2000//25}]
+
+    for {name, new_calorie_options} <- updates do
+      IO.inspect("updating #{name}...")
+
+      Repo.get_by!(NutritionCategory, name: name)
+      |> Ecto.Changeset.change(calorie_options: Enum.to_list(new_calorie_options))
+      |> Repo.update!()
+    end
+
+    :ok
   end
 end

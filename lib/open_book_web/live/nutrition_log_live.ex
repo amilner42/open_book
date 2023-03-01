@@ -12,6 +12,7 @@ defmodule OpenBookWeb.NutritionLogLive do
   alias OpenBook.LittleLogger, as: LL
 
   alias OpenBookWeb.HomeLive
+  alias OpenBookWeb.ViewUtils
 
   def mount_live(_params, %{"user_id" => user_id}, socket) do
     LL.metadata_add_current_user_id(user_id)
@@ -111,13 +112,21 @@ defmodule OpenBookWeb.NutritionLogLive do
             </p>
             <div class="is-flex is-flex-direction-row is-flex-wrap-wrap	">
               <%= for calorie_count <- @selected_nutrition_category.calorie_options do %>
-              <div class="tile p-1">
+              <div
+                class={
+                  ViewUtils.class_list("p-1", %{
+                      "flex-basis-full" => rem(calorie_count, 100) == 0,
+                      "flex-basis-third" => rem(calorie_count, 100) != 0
+                    }
+                  )
+                }
+              >
                 <button
-                  class="button is-fullwidth is-light br-0 has_border_grey"
+                  class="button is-small small-button-medium-height is-fullwidth is-light br-0 has_border_grey"
                   phx-click="select_calorie_option"
                   phx-value-calorie_count={calorie_count}
                 >
-                  <span class=""><%= calorie_count %> calories</span>
+                  <span class=""><%= calorie_count %> cals</span>
                 </button>
               </div>
               <% end %>
