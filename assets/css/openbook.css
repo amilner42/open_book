@@ -107,3 +107,7 @@ nav.navbar {
 .flex-basis-full {
     flex-basis: 100% !important;
 }
+
+.small-button-medium-height {
+   height: 45px;
+}

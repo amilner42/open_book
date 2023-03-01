@@ -162,7 +162,7 @@ defmodule OpenBookWeb.ExerciseLogLive do
               }
             >
               <button
-                class="button is-medium is-light is-fullwidth has_border_grey"
+                class="button is-small small-button-medium-height is-light is-fullwidth has_border_grey"
                 phx-click="select_exercise_measurement"
                 phx-value-exercise_measurement={amount_option}
               >
@@ -176,11 +176,19 @@ defmodule OpenBookWeb.ExerciseLogLive do
           <p class="pt-0 pb-4">
             For how long?
           </p>
-          <div class="is-flex is-flex-direction-row is-flex-wrap-wrap	">
+          <div class="is-flex is-flex-wrap-wrap	">
           <%= for minute_option <- get_duration_minute_options() do %>
-            <div class="tile p-1">
+            <div
+                class={
+                  ViewUtils.class_list("p-1", %{
+                      "flex-basis-full" => rem(minute_option, 60) == 0,
+                      "flex-basis-third" => rem(minute_option, 60) != 0
+                    }
+                  )
+                }
+              >
               <button
-                class="button is-medium is-light is-fullwidth has_border_grey"
+                class="button is-small small-button-medium-height is-light is-fullwidth has_border_grey"
                 phx-click="select_exercise_measurement"
                 phx-value-exercise_measurement={minute_option}
               >
@@ -307,12 +315,10 @@ defmodule OpenBookWeb.ExerciseLogLive do
   # Private
 
   defp get_duration_minute_options() do
-    sub_hour_options = Enum.to_list(10..60//5)
-    one_to_two_hour_options = Enum.to_list(70..120//10)
-    two_to_four_hours = Enum.to_list(135..240//15)
-    four_to_ten_hours = Enum.to_list(270..600//30)
+    sub_hour_options = Enum.to_list(15..60//5)
+    one_to_ten_hour_options = Enum.to_list(75..600//15)
 
-    sub_hour_options ++ one_to_two_hour_options ++ two_to_four_hours ++ four_to_ten_hours
+    sub_hour_options ++ one_to_ten_hour_options
   end
 
   defp get_amount_options() do
@@ -323,20 +329,18 @@ defmodule OpenBookWeb.ExerciseLogLive do
     minutes = rem(total_minutes, 60)
     hours = div(total_minutes, 60)
 
-    hour_text =
-      if hours == 0 do
-        ""
-      else
-        "#{hours} hour "
-      end
+    cond do
+      minutes == 0 && hours == 1 ->
+        "1 hour"
 
-    minutes_text =
-      if minutes == 0 do
-        ""
-      else
+      minutes == 0 ->
+        "#{hours} hours"
+
+      hours == 0 ->
         "#{minutes} min"
-      end
 
-    "#{hour_text}#{minutes_text}"
+      true ->
+        "#{hours}h #{minutes}m"
+    end
   end
 end
