@@ -20,11 +20,11 @@ defmodule OpenBook.DateHelpers do
     end
   end
 
-  def naive_start_of_day(naive_date_time) do
-    %{naive_date_time | hour: 0, minute: 0, second: 0}
-  end
+  def naive_start_of_day(%Date{} = date), do: NaiveDateTime.new!(date, %Time{hour: 0, minute: 0, second: 0})
 
-  def naive_end_of_day(naive_date_time) do
-    %{naive_date_time | hour: 23, minute: 59, second: 59}
-  end
+  def naive_start_of_day(%NaiveDateTime{} = naive_date_time),
+    do: naive_start_of_day(NaiveDateTime.to_date(naive_date_time))
+
+  def naive_end_of_day(%Date{} = date), do: NaiveDateTime.new!(date, %Time{hour: 23, minute: 59, second: 59})
+  def naive_end_of_day(naive_date_time), do: naive_end_of_day(NaiveDateTime.to_date(naive_date_time))
 end
