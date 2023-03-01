@@ -114,7 +114,7 @@ defmodule OpenBookWeb.HomeLive do
           <%= for day <- @book_daily_pages do %>
           <div class="mb-4 daily-entry">
             <div class="is-capitalized is-size-4 has-text-centered pb-4 has-text-weight-bold">
-              <%= DateHelpers.readable_date(DateTime.now!("America/Los_Angeles"), day.date, :human_relative_lingo_with_prefix) %>
+              <%= DateHelpers.readable_date(DateTime.now!("America/Los_Angeles"), day.date, :human_relative_lingo) %>
             </div>
 
             <div class="level is-mobile pb-0 mb-2">

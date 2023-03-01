@@ -22,7 +22,7 @@ defmodule OpenBookWeb.ShareController do
 
     shared_user = Accounts.get_user!(user_id)
 
-    # TODO(Arie): This is inefficient as it fetches all [inc. unused] friend data, but, whatevs.
+    # TODO(Arie): This is inefficient as it fetches all [unused] friend data, but, whatevs.
     compressed_nutrition_and_exercise_entries =
       user_id
       |> Fitness.fetch_nutrition_and_exercise_entries_and_friends(%{
@@ -36,7 +36,7 @@ defmodule OpenBookWeb.ShareController do
         compressed_nutrition_and_exercise_entries,
         date,
         user_id,
-        shared_user.display_name
+        "I"
       )
 
     shared_readable_exercise_description =
@@ -44,11 +44,13 @@ defmodule OpenBookWeb.ShareController do
         compressed_nutrition_and_exercise_entries,
         date,
         user_id,
-        shared_user.display_name,
+        "I",
         all_exercise_category_names_by_id
       )
 
     conn
+    |> assign(:date, date)
+    |> assign(:shared_user_display_name, shared_user.display_name)
     |> assign(:shared_readable_calorie_description, shared_readable_calorie_description)
     |> assign(:shared_readable_exercise_description, shared_readable_exercise_description)
     |> render("share_day_stats.html")

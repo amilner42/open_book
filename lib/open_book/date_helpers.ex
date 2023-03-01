@@ -3,7 +3,11 @@ defmodule OpenBook.DateHelpers do
   Some misc. date helpers.
   """
 
-  def readable_date(user_local_date, other_date, :human_relative_lingo_with_prefix) do
+  def readable_date(date, :calendar_date) do
+    "#{Calendar.strftime(date, "%A, %b %d")}"
+  end
+
+  def readable_date(user_local_date, other_date, :human_relative_lingo) do
     case Date.diff(user_local_date, other_date) do
       -1 ->
         "tomorrow"
@@ -14,9 +18,8 @@ defmodule OpenBook.DateHelpers do
       1 ->
         "yesterday"
 
-      # TODO(Arie): This can have more relative dates ("this upcoming friday") etc.
       _ ->
-        "#{Calendar.strftime(other_date, "%A, %b %d")}"
+        readable_date(other_date, :calendar_date)
     end
   end
 
