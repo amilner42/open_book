@@ -29,6 +29,7 @@ defmodule OpenBookWeb.HomeLive do
     socket =
       socket
       |> assign(:user, user)
+      |> assign(:active_share_day_modal, false)
 
     {:ok, socket}
   end
@@ -95,6 +96,34 @@ defmodule OpenBookWeb.HomeLive do
     {:noreply, socket}
   end
 
+  def handle_event(
+    "activate_share_day_modal",
+    params,
+    socket
+  ) do
+    LL.info_event("handle_event", Map.merge(params, %{event_name: :activate_share_day_modal}))
+
+    socket =
+      socket
+      |> assign(:active_share_day_modal, true)
+
+    {:noreply, socket}
+  end
+
+  def handle_event(
+    "deactivate_share_day_modal",
+    params,
+    socket
+  ) do
+    LL.info_event("handle_event", Map.merge(params, %{event_name: :deactivate_share_day_modal}))
+
+    socket =
+      socket
+      |> assign(:active_share_day_modal, false)
+
+    {:noreply, socket}
+  end
+
   ## Render
 
   def render(assigns) do
@@ -110,6 +139,30 @@ defmodule OpenBookWeb.HomeLive do
         </div>
 
       <% "book" -> %>
+        <div class={ViewUtils.class_list("modal", %{"is-active" => @active_share_day_modal})}>
+          <div
+            class="modal-background"
+            phx-click="deactivate_share_day_modal"
+          >
+          </div>
+          <div class="modal-content">
+            <div class="box m-3">
+              Shares with close friends on/off the platform.
+
+              <div class="buttons are-small has-addons is-right">
+                <button class="button is-small is-rounded">
+                  <span class="icon">
+                    <i class="fas fa-link"></i>
+                  </span>
+
+                  <span>Copy Link</span>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
         <div>
           <%= for day <- @book_daily_pages do %>
           <div class="mb-4 daily-entry">
@@ -194,6 +247,19 @@ defmodule OpenBookWeb.HomeLive do
                 </div>
               </div>
               <% end %>
+            </div>
+            <div class="buttons has-addons is-right">
+              <button
+                class="button is-small is-dark is-rounded b-0 aligned-right"
+                phx-click="activate_share_day_modal"
+              >
+                <span class="icon">
+                  <i class="fas fa-share-alt"></i>
+                </span>
+                <span>
+                  share
+                </span>
+              </button>
             </div>
           </div>
           <% end %>
