@@ -4,7 +4,7 @@ defmodule OpenBookWeb.ChallengesLive do
   alias OpenBook.Accounts
   alias OpenBook.LittleLogger, as: LL
 
-  alias OpenBookWeb.Markdowns.FooterMenuBar
+  alias OpenBookWeb.Markdowns.InnerBar
 
   def mount_live(_params, %{"user_id" => user_id}, socket) do
     LL.metadata_add_current_user_id(user_id)
@@ -29,6 +29,8 @@ defmodule OpenBookWeb.ChallengesLive do
 
   def render(assigns) do
     ~H"""
+    <InnerBar.inner_bar active_tab={"challenges"}/>
+
     <section class="hero">
       <div class="hero-body has-text-centered">
         <div class="is-5 has-text-grey">
@@ -41,9 +43,6 @@ defmodule OpenBookWeb.ChallengesLive do
         </div>
       </div>
     </section>
-
-    <div class="pt-6"> </div>
-    <FooterMenuBar.footer_menu_bar active_tab={"challenges"}/>
     """
   end
 end

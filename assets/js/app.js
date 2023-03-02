@@ -28,8 +28,24 @@ import { Socket } from "phoenix"
 import { LiveSocket } from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 
+var navbar;
+var navbar_padding;
+
+const hooks = {
+    InnerBar: {
+        mounted() {
+            navbar = this.el;
+        }
+    },
+    InnerBarPadding: {
+        mounted() {
+            navbar_padding = this.el;
+        }
+    }
+}
+
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
-let liveSocket = new LiveSocket("/live", Socket, { params: { _csrf_token: csrfToken } })
+let liveSocket = new LiveSocket("/live", Socket, { params: { _csrf_token: csrfToken}, hooks: hooks })
 
 // Show progress bar on live navigation and form submits
 topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" })
@@ -58,3 +74,15 @@ window.addEventListener("phx:copy", (event) => {
         // copied.
     })
 })
+
+const sticky_height = 50;
+window.onscroll = function() {stickInnerBarIfPresent()};
+function stickInnerBarIfPresent() {
+  if (window.pageYOffset >= sticky_height) {
+    navbar.classList.add("sticky")
+    navbar_padding.classList.remove("is-hidden")
+  } else {
+    navbar.classList.remove("sticky");
+    navbar_padding.classList.add("is-hidden")
+  }
+}

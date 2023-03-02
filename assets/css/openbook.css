@@ -21,14 +21,26 @@ Refer: https://css-tricks.com/the-trick-to-viewport-units-on-mobile/
     background-color: #5cceff !important;
 }
 
-.new_entry_footer {
+.inner_bar.sticky {
     position: fixed;
-    bottom: 0;
+    z-index: 2;
+    top: 0;
     left: 0;
     width: 100%;
 }
 
+.inner_bar.sticky > #nested_border_bottom {
+    border-bottom: #888 1px solid !important;
+}
+
+.inner_bar {
+    width: 100%;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
 nav.navbar {
+    height: 50px;
     background-color: #2f364d;
 }
 

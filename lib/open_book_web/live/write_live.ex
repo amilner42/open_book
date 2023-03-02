@@ -7,7 +7,7 @@ defmodule OpenBookWeb.WriteLive do
   alias OpenBook.LittleLogger, as: LL
 
   alias OpenBookWeb.BookLive
-  alias OpenBookWeb.Markdowns.FooterMenuBar
+  alias OpenBookWeb.Markdowns.InnerBar
   alias OpenBookWeb.ViewUtils
 
   def mount_live(_params, %{"user_id" => user_id}, socket) do
@@ -244,9 +244,11 @@ defmodule OpenBookWeb.WriteLive do
 
   def render(assigns) do
     ~H"""
+    <InnerBar.inner_bar active_tab={"write"}/>
+
     <%= unless @page_loading do %>
 
-    <div class="p-4">
+    <div class="p-4 pt-5">
       <%= cond do %>
       <% @selected_nutrition_category == nil && @selected_exercise_category == nil -> %>
         <.exercise_and_nutrition_category_selections
@@ -291,8 +293,6 @@ defmodule OpenBookWeb.WriteLive do
 
     <div class="pt-6"> </div>
     <% end %>
-
-    <FooterMenuBar.footer_menu_bar active_tab={"write"}/>
     """
   end
 

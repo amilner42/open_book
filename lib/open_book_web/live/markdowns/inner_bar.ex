@@ -1,4 +1,4 @@
-defmodule OpenBookWeb.Markdowns.FooterMenuBar do
+defmodule OpenBookWeb.Markdowns.InnerBar do
   use OpenBookWeb, :component
 
   alias Phoenix.LiveView.JS
@@ -9,12 +9,13 @@ defmodule OpenBookWeb.Markdowns.FooterMenuBar do
   alias OpenBookWeb.ViewUtils
   alias OpenBookWeb.WriteLive
 
-  def footer_menu_bar(assigns) do
+  def inner_bar(assigns) do
     ~H"""
-    <div class="new_entry_footer">
+    <div id="inner_bar" class="inner_bar" phx-hook="InnerBar">
       <p
+        id="nested_border_bottom"
         class="buttons"
-        style="border-top: 0.5px solid #DDD"
+        style="border-bottom: 0.5px solid #DDD"
       >
         <button
           class={ViewUtils.class_list(
@@ -25,11 +26,11 @@ defmodule OpenBookWeb.Markdowns.FooterMenuBar do
           style="height: 55px;"
           phx-click={JS.navigate(Routes.live_path(OpenBookWeb.Endpoint, ChallengesLive))}
         >
-          <div style="position: absolute; top: 5px;">
+          <div style="position: absolute; top: 8px;">
             <i class="fas fa-trophy"></i>
           </div>
 
-          <div class="is_size_8" style="position: absolute; bottom: 14px;">
+          <div class="is_size_8" style="position: absolute; bottom: 10px;">
             Challenges
           </div>
         </button>
@@ -43,11 +44,11 @@ defmodule OpenBookWeb.Markdowns.FooterMenuBar do
           style="height: 55px;"
           phx-click={JS.navigate(Routes.live_path(OpenBookWeb.Endpoint, BookLive))}
         >
-          <div style="position: absolute; top: 5px;">
+          <div style="position: absolute; top: 8px;">
             <i class="fas fa-book"></i>
           </div>
 
-          <div class="is_size_8" style="position: absolute; bottom: 14px;">
+          <div class="is_size_8" style="position: absolute; bottom: 10px;">
             OpenBook
           </div>
         </button>
@@ -61,11 +62,11 @@ defmodule OpenBookWeb.Markdowns.FooterMenuBar do
           style="height: 55px;"
           phx-click={JS.navigate(Routes.live_path(OpenBookWeb.Endpoint, WriteLive))}
         >
-          <div style="position: absolute; top: 5px;">
+          <div style="position: absolute; top: 8px;">
             <i class="fas fa-pencil-alt"></i>
           </div>
 
-          <div class="is_size_8" style="position: absolute; bottom: 14px;">
+          <div class="is_size_8" style="position: absolute; bottom: 10px;">
             Write
           </div>
         </button>
@@ -79,17 +80,18 @@ defmodule OpenBookWeb.Markdowns.FooterMenuBar do
           style="height: 55px;"
           phx-click={JS.navigate(Routes.live_path(OpenBookWeb.Endpoint, FriendsLive))}
         >
-          <div style="position: absolute; top: 5px;">
+          <div style="position: absolute; top: 8px;">
             <i class="fas fa-user-friends"></i>
           </div>
 
-          <div class="is_size_8" style="position: absolute; bottom: 14px;">
+          <div class="is_size_8" style="position: absolute; bottom: 10px;">
             Friends
           </div>
         </button>
 
       </p>
     </div>
+    <div id="inner_bar_padding" class="is-hidden" style="padding-bottom: 50px;" phx-hook="InnerBarPadding"></div>
     """
   end
 end

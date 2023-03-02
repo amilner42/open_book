@@ -9,7 +9,7 @@ defmodule OpenBookWeb.BookLive do
   alias OpenBook.Share
   alias OpenBook.LittleLogger, as: LL
 
-  alias OpenBookWeb.Markdowns.FooterMenuBar
+  alias OpenBookWeb.Markdowns.InnerBar
   alias OpenBookWeb.ViewUtils
 
   def mount_live(_params, %{"user_id" => user_id}, socket) do
@@ -71,6 +71,8 @@ defmodule OpenBookWeb.BookLive do
 
   def render(assigns) do
     ~H"""
+    <InnerBar.inner_bar active_tab={"book"}/>
+
     <%= unless @page_loading do %>
 
     <div class={ViewUtils.class_list("modal", %{"is-active" => @active_share_day_modal_data != nil})}>
@@ -213,10 +215,6 @@ defmodule OpenBookWeb.BookLive do
       </div>
       <% end %>
     </div>
-
-    <div class="pt-6"> </div>
-    <FooterMenuBar.footer_menu_bar active_tab={"book"}/>
-
     <% end %>
     """
   end
