@@ -1,3 +1,7 @@
+html {
+    background-color: #FAFAFA;
+}
+
 body {
     font-family: 'DM Sans', sans-serif;
 }
@@ -110,4 +114,12 @@ nav.navbar {
 
 .small-button-medium-height {
    height: 45px;
+}
+
+.is_halfwidth {
+    width: 50%;
+}
+
+.is_quarter_width {
+    width: 25%;
 }
