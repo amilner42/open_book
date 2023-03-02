@@ -23,7 +23,7 @@ Refer: https://css-tricks.com/the-trick-to-viewport-units-on-mobile/
 
 .inner_bar.sticky {
     position: fixed;
-    z-index: 2;
+    z-index: 10;
     top: 0;
     left: 0;
     width: 100%;
