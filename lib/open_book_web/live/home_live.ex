@@ -294,7 +294,6 @@ defmodule OpenBookWeb.HomeLive do
     </div>
 
     <div class="pt-6"> </div>
-
     <FooterMenuBar.footer_menu_bar />
     <% end %>
     """

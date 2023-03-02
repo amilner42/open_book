@@ -37,7 +37,7 @@ nav.navbar {
 }
 
 .has_text_dark_blue {
-    color: #2f364d;
+    color: #2f364d !important;
 }
 
 .has_text_blue {
@@ -122,4 +122,8 @@ nav.navbar {
 
 .is_quarter_width {
     width: 25%;
+}
+
+.is_size_8 {
+    font-size: 0.6rem;
 }
