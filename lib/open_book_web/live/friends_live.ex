@@ -29,7 +29,18 @@ defmodule OpenBookWeb.FriendsLive do
 
   def render(assigns) do
     ~H"""
-    Friends LivePage.
+    <section class="hero">
+      <div class="hero-body has-text-centered">
+        <div class="is-5 has-text-grey">
+          <span class="icon" style="vertical-align: middle;">
+            <i class="fas fa-code"></i>
+          </span>
+          <span style="vertical-align: middle;">
+            under development
+          </span>
+        </div>
+      </div>
+    </section>
 
     <div class="pt-6"> </div>
     <FooterMenuBar.footer_menu_bar active_tab={"friends"}/>
