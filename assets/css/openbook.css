@@ -21,6 +21,16 @@ Refer: https://css-tricks.com/the-trick-to-viewport-units-on-mobile/
     background-color: #5cceff !important;
 }
 
+.inner_bar {
+    width: 100%;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+.inner_bar button {
+    border-radius: 0;
+}
+
 .inner_bar.sticky {
     position: fixed;
     z-index: 10;
@@ -31,12 +41,6 @@ Refer: https://css-tricks.com/the-trick-to-viewport-units-on-mobile/
 
 .inner_bar.sticky > #nested_border_bottom {
     border-bottom: #888 1px solid !important;
-}
-
-.inner_bar {
-    width: 100%;
-    padding-bottom: 0;
-    margin-bottom: 0;
 }
 
 nav.navbar {
