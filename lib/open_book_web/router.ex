@@ -42,9 +42,6 @@ defmodule OpenBookWeb.Router do
   scope "/", OpenBookWeb do
     pipe_through([:browser, :authenticate_user])
 
-    live("/log/exercise", ExerciseLogLive)
-    live("/log/nutrition", NutritionLogLive)
-
     live("/book", BookLive)
     live("/challenges", ChallengesLive)
     live("/friends", FriendsLive)

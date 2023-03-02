@@ -397,7 +397,7 @@ defmodule OpenBookWeb.WriteLive do
       <%= for nutrition_category <- @nutrition_categories do %>
       <div class="tile p-1">
         <button
-          class="button is-medium is-fullwidth is-light has_border_grey"
+          class="button is-small small-button-medium-height is-fullwidth is-light has_border_grey"
           phx-click="select_nutrition_category"
           phx-value-nutrition_category_id={nutrition_category.id}
         >
@@ -422,7 +422,7 @@ defmodule OpenBookWeb.WriteLive do
       <%= for exercise_category <- @exercise_categories do %>
         <div class="tile p-1">
           <button
-            class="button is-light is-medium is-fullwidth has_border_grey"
+            class="button small-button-medium-height is-light is-small is-fullwidth has_border_grey"
             phx-click="select_exercise_category"
             phx-value-exercise_category_id={exercise_category.id}
           >
