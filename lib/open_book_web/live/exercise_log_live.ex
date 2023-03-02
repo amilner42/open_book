@@ -13,7 +13,7 @@ defmodule OpenBookWeb.ExerciseLogLive do
   alias OpenBook.HumanReadable
   alias OpenBook.LittleLogger, as: LL
 
-  alias OpenBookWeb.HomeLive
+  alias OpenBookWeb.BookLive
 
   def mount_live(_params, %{"user_id" => user_id}, socket) do
     LL.metadata_add_current_user_id(user_id)
@@ -258,7 +258,7 @@ defmodule OpenBookWeb.ExerciseLogLive do
 
     Fitness.insert_new_exercise_entry!(user.id, params)
 
-    to = Routes.live_path(OpenBookWeb.Endpoint, HomeLive, %{stbt: "book"})
+    to = Routes.live_path(OpenBookWeb.Endpoint, BookLive)
 
     socket =
       socket

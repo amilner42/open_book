@@ -3,7 +3,7 @@ defmodule OpenBook.Plugs.Auth do
 
   alias OpenBook.LittleLogger, as: LL
 
-  alias OpenBookWeb.HomeLive
+  alias OpenBookWeb.ChallengesLive
   alias OpenBookWeb.Router.Helpers, as: Routes
 
   # Plugs
@@ -102,6 +102,6 @@ defmodule OpenBook.Plugs.Auth do
   end
 
   # Default redirect routes for logged-in/out users.
-  defp default_logged_in_route(conn), do: Routes.live_path(conn, HomeLive)
+  defp default_logged_in_route(conn), do: Routes.live_path(conn, ChallengesLive)
   defp default_logged_out_route(conn), do: Routes.page_path(conn, :index)
 end

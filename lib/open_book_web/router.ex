@@ -50,8 +50,6 @@ defmodule OpenBookWeb.Router do
     live("/friends", FriendsLive)
     live("/write", WriteLive)
 
-    live("/home", HomeLive)
-
     # Session Routes
     get("/logout", SessionController, :delete)
   end

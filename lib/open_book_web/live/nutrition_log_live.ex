@@ -11,7 +11,7 @@ defmodule OpenBookWeb.NutritionLogLive do
   alias OpenBook.Fitness
   alias OpenBook.LittleLogger, as: LL
 
-  alias OpenBookWeb.HomeLive
+  alias OpenBookWeb.BookLive
   alias OpenBookWeb.ViewUtils
 
   def mount_live(_params, %{"user_id" => user_id}, socket) do
@@ -189,7 +189,7 @@ defmodule OpenBookWeb.NutritionLogLive do
 
     Fitness.insert_new_nutrition_entry!(user.id, params)
 
-    to = Routes.live_path(OpenBookWeb.Endpoint, HomeLive, %{stbt: "book"})
+    to = Routes.live_path(OpenBookWeb.Endpoint, BookLive)
 
     socket =
       socket
