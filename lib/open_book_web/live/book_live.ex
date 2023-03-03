@@ -185,9 +185,7 @@ defmodule OpenBookWeb.BookLive do
   #     %{
   #       date: ~D[...],
   #       maybe_readable_calorie_description: "I did not record any nutrition",
-  #       maybe_readable_exercise_descrption: "I did not exercise.",
-  #       friend_nutrition_summaries: ["Charlie had 2000 calories", "Robin did not record any nutrition."]
-  #       friend_exercise_summaries: ["Charlie did not exercise", "Robin did 50 pull-ups."]
+  #       maybe_readable_exercise_descrption: "I did not exercise."
   #     },
   #     ...
   #   ]
