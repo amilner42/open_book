@@ -1,5 +1,5 @@
 html {
-    background-color: #FAFAFA;
+    background-color: #F4F4F4;
 }
 
 body {
@@ -120,8 +120,16 @@ nav.navbar {
     padding: 15px 15px 15px 15px;
 }
 
+.flex-basis-quarter {
+    flex-basis: 25% !important;
+}
+
 .flex-basis-third {
     flex-basis: 33.333333% !important;
+}
+
+.flex-basis-half {
+    flex-basis: 50% !important;
 }
 
 .flex-basis-full {

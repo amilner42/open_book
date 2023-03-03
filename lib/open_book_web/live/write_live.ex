@@ -395,9 +395,10 @@ defmodule OpenBookWeb.WriteLive do
     ~H"""
     <div class="is-flex is-flex-direction-row is-flex-wrap-wrap mb-4">
       <%= for nutrition_category <- @nutrition_categories do %>
-      <div class="tile p-1">
+      <div class="flex-basis-half p-1">
         <button
-          class="button is-small small-button-medium-height is-fullwidth is-light has_border_grey"
+          class="button is-small small-button-medium-height is-fullwidth is-white has_border_grey"
+          style="border-radius: 5px"
           phx-click="select_nutrition_category"
           phx-value-nutrition_category_id={nutrition_category.id}
         >
@@ -420,9 +421,12 @@ defmodule OpenBookWeb.WriteLive do
     ~H"""
     <div class="is-flex is-flex-direction-row is-flex-wrap-wrap	">
       <%= for exercise_category <- @exercise_categories do %>
-        <div class="tile p-1">
+        <div
+          class={ViewUtils.class_list("p-1 flex-basis-third", %{"flex-basis-half" => exercise_category.icon_css_class != nil})}
+        >
           <button
-            class="button small-button-medium-height is-light is-small is-fullwidth has_border_grey"
+            class="button is-small small-button-medium-height is-white is-small is-fullwidth has_border_grey"
+            style="border-radius: 5px"
             phx-click="select_exercise_category"
             phx-value-exercise_category_id={exercise_category.id}
           >
@@ -458,7 +462,8 @@ defmodule OpenBookWeb.WriteLive do
         }
       >
         <button
-          class="button is-small small-button-medium-height is-fullwidth is-light br-0 has_border_grey"
+          class="button is-small small-button-medium-height is-fullwidth is-white is-rounded has_border_grey"
+          style="border-radius: 5px"
           phx-click="select_calorie_option"
           phx-value-calorie_count={calorie_count}
         >
@@ -479,7 +484,8 @@ defmodule OpenBookWeb.WriteLive do
     <%= for intensity_level <- Fitness.intensity_levels do %>
       <div class="tile p-1">
         <button
-          class="button is-light is-medium is-fullwidth has_border_grey"
+          class="button is-small small-button-medium-height is-fullwidth is-white is-rounded has_border_grey"
+          style="border-radius: 5px"
           phx-click="select_intensity_level"
           phx-value-intensity_level={intensity_level}
         >
@@ -520,7 +526,8 @@ defmodule OpenBookWeb.WriteLive do
           }
         >
           <button
-            class="button is-small small-button-medium-height is-light is-fullwidth has_border_grey"
+            class="button is-small small-button-medium-height is-white is-rounded is-fullwidth has_border_grey"
+            style="border-radius: 5px;"
             phx-click="select_exercise_measurement"
             phx-value-exercise_measurement={amount_option}
           >
@@ -546,7 +553,8 @@ defmodule OpenBookWeb.WriteLive do
             }
           >
           <button
-            class="button is-small small-button-medium-height is-light is-fullwidth has_border_grey"
+            class="button is-small small-button-medium-height is-white is-rounded is-fullwidth has_border_grey"
+            style="border-radius: 5px;"
             phx-click="select_exercise_measurement"
             phx-value-exercise_measurement={minute_option}
           >
