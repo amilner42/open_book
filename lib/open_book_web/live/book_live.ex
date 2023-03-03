@@ -123,35 +123,8 @@ defmodule OpenBookWeb.BookLive do
           <%= DateHelpers.readable_date(DateTime.now!("America/Los_Angeles"), day.date, :human_relative_lingo) %>
         </div>
 
-        <div class="level is-mobile pb-0 mb-0">
-          <div class="level-left">
-            <div class="level-item mr-2">
-              <span class="icon">
-                <i class="fas fa-utensils"></i>
-              </span>
-            </div>
-            <div class="level-item">
-              <span style="max-width: 250px; line-height: 20px;">
-                <%= day.maybe_readable_calorie_description %>
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div class="level is-mobile pb-0 mb-0 mt-4">
-          <div class="level-left">
-            <div class="level-item mr-2">
-              <span class="icon">
-              <i class="fas fa-dumbbell"></i>
-              </span>
-            </div>
-            <div class="level-item">
-              <span style="max-width: 250px; line-height: 20px;">
-                <%= day.maybe_readable_exercise_descrption %>
-              </span>
-            </div>
-          </div>
-        </div>
+        <.calorie_description_row maybe_readable_calorie_description={day.maybe_readable_calorie_description} />
+        <.exercise_description_row maybe_readable_exercise_description={day.maybe_readable_exercise_description} />
 
         <div class="buttons has-addons is-right mt-4">
           <button
@@ -185,7 +158,7 @@ defmodule OpenBookWeb.BookLive do
   #     %{
   #       date: ~D[...],
   #       maybe_readable_calorie_description: "I did not record any nutrition",
-  #       maybe_readable_exercise_descrption: "I did not exercise."
+  #       maybe_readable_exercise_description: "I did not exercise."
   #     },
   #     ...
   #   ]
@@ -219,7 +192,8 @@ defmodule OpenBookWeb.BookLive do
         NaiveDateTime.to_date(naive_date_time_start_of_thirty_days_ago)
       )
 
-    for date <- date_range do
+    date_range
+    |> Enum.reduce([], fn date, result_acc ->
       maybe_readable_calorie_description =
         compressed_nutrition_and_exercise_entries
         |> Fitness.get_calories_from_compressed_nutrition_and_exercise_entries(date, current_user.id)
@@ -227,7 +201,7 @@ defmodule OpenBookWeb.BookLive do
         |> HumanReadable.human_readable_calorie_description("I")
         |> pit!()
 
-      maybe_readable_exercise_descrption =
+      maybe_readable_exercise_description =
         compressed_nutrition_and_exercise_entries
         |> Fitness.get_exercise_category_id_and_intensity_from_compressed_nutrition_and_exercise_entries(
           date,
@@ -237,11 +211,70 @@ defmodule OpenBookWeb.BookLive do
         |> HumanReadable.human_readable_exercise_description("I", all_exercise_category_names_by_id)
         |> pit!()
 
-      %{
-        date: date,
-        maybe_readable_calorie_description: maybe_readable_calorie_description,
-        maybe_readable_exercise_descrption: maybe_readable_exercise_descrption
-      }
-    end
+      # Ignore blank days for now. In future may want to render a nice blank-to-blank UI-date placeholder.
+      case {maybe_readable_calorie_description, maybe_readable_exercise_description} do
+        {nil, nil} ->
+          result_acc
+
+        _ ->
+          non_blank_day = %{
+            date: date,
+            maybe_readable_calorie_description: maybe_readable_calorie_description,
+            maybe_readable_exercise_description: maybe_readable_exercise_description
+          }
+          [non_blank_day | result_acc]
+      end
+    end)
+    |> Enum.reverse()
+  end
+
+  ## Markdowns
+
+  defp calorie_description_row(assigns = %{maybe_readable_calorie_description: nil}) do
+    ~H"""
+    """
+  end
+
+  defp calorie_description_row(assigns) do
+    ~H"""
+    <div class="level is-mobile pb-0 mb-0">
+      <div class="level-left">
+        <div class="level-item mr-2">
+          <span class="icon">
+            <i class="fas fa-utensils"></i>
+          </span>
+        </div>
+        <div class="level-item">
+          <span style="max-width: 250px; line-height: 20px;">
+            <%= @maybe_readable_calorie_description %>
+          </span>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  defp exercise_description_row(assigns = %{maybe_readable_exercise_description: nil}) do
+    ~H"""
+    """
+  end
+
+  defp exercise_description_row(assigns) do
+    ~H"""
+    <div class="level is-mobile pb-0 mb-0 mt-4">
+      <div class="level-left">
+        <div class="level-item mr-2">
+          <span class="icon">
+          <i class="fas fa-dumbbell"></i>
+          </span>
+        </div>
+        <div class="level-item">
+          <span style="max-width: 250px; line-height: 20px;">
+            <%= @maybe_readable_exercise_description %>
+          </span>
+        </div>
+      </div>
+    </div>
+    """
   end
 end

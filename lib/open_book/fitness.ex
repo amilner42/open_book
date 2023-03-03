@@ -228,11 +228,18 @@ defmodule OpenBook.Fitness do
         date,
         user_id
       ) do
-    get_in(compressed_nutrition_and_exercise_entries, [
-      date,
-      user_id,
-      :measurement_by_exercise_category_id_and_intensity_tuple
-    ])
+    result =
+      get_in(compressed_nutrition_and_exercise_entries, [
+        date,
+        user_id,
+        :measurement_by_exercise_category_id_and_intensity_tuple
+      ])
+
+    if(result == %{}) do
+      nil
+    else
+      result
+    end
   end
 
   # Private
