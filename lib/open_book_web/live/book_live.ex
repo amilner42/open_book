@@ -119,6 +119,12 @@ defmodule OpenBookWeb.BookLive do
     </div>
 
     <div class="p-5">
+      <%= if @book_daily_pages == [] do %>
+        <div class="is-4 has-text-centered" style="color: #777;">
+          no activity to display
+        </div>
+      <% end %>
+
       <%= for day <- @book_daily_pages do %>
       <div class="mb-4 daily-entry">
         <div class="is-capitalized is-size-4 has-text-centered pb-4 has-text-weight-bold">
