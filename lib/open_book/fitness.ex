@@ -6,7 +6,6 @@ defmodule OpenBook.Fitness do
   alias OpenBook.Fitness.ExerciseEntry
   alias OpenBook.Fitness.NutritionCategory
   alias OpenBook.Fitness.NutritionEntry
-  alias OpenBook.HumanReadable
   alias OpenBook.LittleLogger, as: LL
   alias OpenBook.QueryBuilders, as: QB
   alias OpenBook.Repo
@@ -220,7 +219,13 @@ defmodule OpenBook.Fitness do
         date,
         user_id
       ) do
-    get_in(compressed_nutrition_and_exercise_entries, [date, user_id, :total_calorie_estimate])
+    result = get_in(compressed_nutrition_and_exercise_entries, [date, user_id, :total_calorie_estimate])
+
+    if(result == 0) do
+      nil
+    else
+      result
+    end
   end
 
   def get_exercise_category_id_and_intensity_from_compressed_nutrition_and_exercise_entries(
