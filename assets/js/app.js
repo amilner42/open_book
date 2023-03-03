@@ -79,10 +79,10 @@ const sticky_height = 50;
 window.onscroll = function() {stickInnerBarIfPresent()};
 function stickInnerBarIfPresent() {
   if (window.pageYOffset >= sticky_height) {
-    navbar.classList.add("sticky")
-    navbar_padding.classList.remove("is-hidden")
+    navbar && navbar.classList.add("sticky")
+    navbar_padding && navbar_padding.classList.remove("is-hidden")
   } else {
-    navbar.classList.remove("sticky");
-    navbar_padding.classList.add("is-hidden")
+    navbar && navbar.classList.remove("sticky");
+    navbar_padding && navbar_padding.classList.add("is-hidden")
   }
 }
