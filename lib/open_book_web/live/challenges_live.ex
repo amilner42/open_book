@@ -38,7 +38,7 @@ defmodule OpenBookWeb.ChallengesLive do
             <i class="fas fa-code"></i>
           </span>
           <span style="vertical-align: middle;">
-            under development
+            Under Development
           </span>
         </div>
       </div>
