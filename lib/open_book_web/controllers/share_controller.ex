@@ -1,6 +1,8 @@
 defmodule OpenBookWeb.ShareController do
   use OpenBookWeb, :controller
 
+  import Pit
+
   alias OpenBook.HumanReadable
   alias OpenBook.Accounts
   alias OpenBook.DateHelpers
@@ -37,12 +39,16 @@ defmodule OpenBookWeb.ShareController do
     shared_readable_calorie_description =
       compressed_nutrition_and_exercise_entries
       |> Fitness.get_calories_from_compressed_nutrition_and_exercise_entries(date, user_id)
+      |> pit!(not nil)
       |> HumanReadable.human_readable_calorie_description("I")
+      |> pit!()
 
     shared_readable_exercise_description =
       compressed_nutrition_and_exercise_entries
       |> Fitness.get_exercise_category_id_and_intensity_from_compressed_nutrition_and_exercise_entries(date, user_id)
+      |> pit!(not nil)
       |> HumanReadable.human_readable_exercise_description("I", all_exercise_category_names_by_id)
+      |> pit!()
 
     conn
     |> assign(:date, date)

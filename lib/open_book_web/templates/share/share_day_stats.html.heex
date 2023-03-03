@@ -24,34 +24,7 @@
             <%= OpenBook.DateHelpers.readable_date(DateTime.now!("America/Los_Angeles"), @date, :human_relative_lingo) %>
         </div>
 
-        <div class="level is-mobile pb-0 mb-0">
-            <div class="level-left">
-            <div class="level-item mr-2">
-                <span class="icon">
-                <i class="fas fa-utensils"></i>
-                </span>
-            </div>
-            <div class="level-item">
-                <span style="max-width: 250px; line-height: 20px;">
-                <%= @shared_readable_calorie_description %>
-                </span>
-            </div>
-            </div>
-        </div>
-
-        <div class="level is-mobile pb-0 mb-0 mt-4">
-            <div class="level-left">
-            <div class="level-item mr-2">
-                <span class="icon">
-                <i class="fas fa-dumbbell"></i>
-                </span>
-            </div>
-            <div class="level-item">
-                <span style="max-width: 250px; line-height: 20px;">
-                <%= @shared_readable_exercise_description %>
-                </span>
-            </div>
-            </div>
-        </div>
+        <%= OpenBookWeb.Markdowns.DescriptionRows.nutrition_description_row(%{maybe_readable_calorie_description: @shared_readable_calorie_description}) %>
+        <%= OpenBookWeb.Markdowns.DescriptionRows.exercise_description_row(%{maybe_readable_exercise_description: @shared_readable_exercise_description}) %>
     </div>
 </div>
