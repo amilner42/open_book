@@ -1,6 +1,9 @@
 defmodule OpenBookWeb.BookLive do
   use OpenBookWeb, :live_view_connected
 
+  import Pit
+
+  alias OpenBook.HumanReadable
   alias Phoenix.LiveView.JS
 
   alias OpenBook.Accounts
@@ -54,45 +57,6 @@ defmodule OpenBookWeb.BookLive do
 
     {:noreply, socket}
   end
-
-  # <%= for summary <- day.friend_nutrition_summaries do %>
-  # <div class="level is-mobile pl-2 pb-0 mb-0">
-  #   <div class="level-left">
-  #     <div class="level-item mr-1">
-  #       <span class="icon">
-  #         <i class="far fa-user-circle"></i>
-  #       </span>
-  #     </div>
-  #     <div class="level-item">
-  #       <span style="max-width: 250px; line-height: 20px;">
-  #         <%= summary %>
-  #       </span>
-  #     </div>
-  #   </div>
-  # </div>
-  # <% end %>
-
-#   <div class="pt-0 pb-2">
-#   <div class="pb-4" style="line-height: 20px;">
-#     <%= day.my_exercise_summary %>
-#   </div>
-#   <%= for summary <- day.friend_exercise_summaries do %>
-#   <div class="level is-mobile pl-2 pb-0 mb-2">
-#     <div class="level-left">
-#       <div class="level-item mr-2">
-#         <span class="icon">
-#           <i class="far fa-user-circle"></i>
-#         </span>
-#       </div>
-#       <div class="level-item">
-#         <span style="max-width: 250px; line-height: 20px;">
-#           <%= summary %>
-#         </span>
-#       </div>
-#     </div>
-#   </div>
-#   <% end %>
-# </div>
 
   def handle_event(
         "deactivate_share_day_modal",
@@ -168,7 +132,7 @@ defmodule OpenBookWeb.BookLive do
             </div>
             <div class="level-item">
               <span style="max-width: 250px; line-height: 20px;">
-                <%= day.my_nutrition_summary %>
+                <%= day.maybe_readable_calorie_description %>
               </span>
             </div>
           </div>
@@ -183,7 +147,7 @@ defmodule OpenBookWeb.BookLive do
             </div>
             <div class="level-item">
               <span style="max-width: 250px; line-height: 20px;">
-                <%= day.my_exercise_summary %>
+                <%= day.maybe_readable_exercise_descrption %>
               </span>
             </div>
           </div>
@@ -220,8 +184,8 @@ defmodule OpenBookWeb.BookLive do
   #   [
   #     %{
   #       date: ~D[...],
-  #       my_nutrition_summary: "I did not record any nutrition",
-  #       my_exercise_summary: "I did not exercise.",
+  #       maybe_readable_calorie_description: "I did not record any nutrition",
+  #       maybe_readable_exercise_descrption: "I did not exercise.",
   #       friend_nutrition_summaries: ["Charlie had 2000 calories", "Robin did not record any nutrition."]
   #       friend_exercise_summaries: ["Charlie did not exercise", "Robin did 50 pull-ups."]
   #     },
@@ -241,6 +205,7 @@ defmodule OpenBookWeb.BookLive do
       |> NaiveDateTime.add(-30, :day)
       |> DateHelpers.naive_start_of_day()
 
+    # TODO(Arie): We no longer need to fetch friend data as it is not rendered.
     nutrition_and_exercise_entries_and_friends =
       Fitness.fetch_nutrition_and_exercise_entries_and_friends(current_user.id, %{
         from_local_datetime: naive_date_time_start_of_thirty_days_ago,
@@ -257,56 +222,27 @@ defmodule OpenBookWeb.BookLive do
       )
 
     for date <- date_range do
-      readable_calorie_description =
-        Fitness.get_readable_calorie_description(
-          compressed_nutrition_and_exercise_entries,
+      maybe_readable_calorie_description =
+        compressed_nutrition_and_exercise_entries
+        |> Fitness.get_calories_from_compressed_nutrition_and_exercise_entries(date, current_user.id)
+        |> pit!(not nil)
+        |> HumanReadable.human_readable_calorie_description("I")
+        |> pit!()
+
+      maybe_readable_exercise_descrption =
+        compressed_nutrition_and_exercise_entries
+        |> Fitness.get_exercise_category_id_and_intensity_from_compressed_nutrition_and_exercise_entries(
           date,
-          current_user.id,
-          "I"
+          current_user.id
         )
-
-      readable_exercise_description =
-        Fitness.get_readable_exercise_description(
-          compressed_nutrition_and_exercise_entries,
-          date,
-          current_user.id,
-          "I",
-          all_exercise_category_names_by_id
-        )
-
-      %{
-        friend_by_id: friend_by_id,
-        nutrition_open_book_friend_ids: nutrition_open_book_friend_ids,
-        exercise_open_book_friend_ids: exercise_open_book_friend_ids
-      } = nutrition_and_exercise_entries_and_friends
-
-      friend_nutrition_summaries =
-        Enum.map(nutrition_open_book_friend_ids, fn friend_id ->
-          Fitness.get_readable_calorie_description(
-            compressed_nutrition_and_exercise_entries,
-            date,
-            friend_id,
-            Map.fetch!(friend_by_id, friend_id).display_name
-          )
-        end)
-
-      friend_exercise_summaries =
-        Enum.map(exercise_open_book_friend_ids, fn friend_id ->
-          Fitness.get_readable_exercise_description(
-            compressed_nutrition_and_exercise_entries,
-            date,
-            friend_id,
-            Map.fetch!(friend_by_id, friend_id).display_name,
-            all_exercise_category_names_by_id
-          )
-        end)
+        |> pit!(not nil)
+        |> HumanReadable.human_readable_exercise_description("I", all_exercise_category_names_by_id)
+        |> pit!()
 
       %{
         date: date,
-        my_nutrition_summary: readable_calorie_description,
-        my_exercise_summary: readable_exercise_description,
-        friend_nutrition_summaries: friend_nutrition_summaries,
-        friend_exercise_summaries: friend_exercise_summaries
+        maybe_readable_calorie_description: maybe_readable_calorie_description,
+        maybe_readable_exercise_descrption: maybe_readable_exercise_descrption
       }
     end
   end

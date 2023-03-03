@@ -50,7 +50,8 @@ defmodule OpenBook.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:logflare_logger_backend, "~> 0.11.0"},
-      {:tzdata, "~> 1.1"}
+      {:tzdata, "~> 1.1"},
+      {:pit, "~> 1.2.0"}
     ]
   end
 

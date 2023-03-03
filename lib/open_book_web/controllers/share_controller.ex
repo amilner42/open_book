@@ -1,6 +1,7 @@
 defmodule OpenBookWeb.ShareController do
   use OpenBookWeb, :controller
 
+  alias OpenBook.HumanReadable
   alias OpenBook.Accounts
   alias OpenBook.DateHelpers
   alias OpenBook.Fitness
@@ -31,22 +32,17 @@ defmodule OpenBookWeb.ShareController do
       })
       |> Fitness.compress_nutrition_and_exercise_entries()
 
+    # TODO(Arie): Shares with blank data?
+
     shared_readable_calorie_description =
-      Fitness.get_readable_calorie_description(
-        compressed_nutrition_and_exercise_entries,
-        date,
-        user_id,
-        "I"
-      )
+      compressed_nutrition_and_exercise_entries
+      |> Fitness.get_calories_from_compressed_nutrition_and_exercise_entries(date, user_id)
+      |> HumanReadable.human_readable_calorie_description("I")
 
     shared_readable_exercise_description =
-      Fitness.get_readable_exercise_description(
-        compressed_nutrition_and_exercise_entries,
-        date,
-        user_id,
-        "I",
-        all_exercise_category_names_by_id
-      )
+      compressed_nutrition_and_exercise_entries
+      |> Fitness.get_exercise_category_id_and_intensity_from_compressed_nutrition_and_exercise_entries(date, user_id)
+      |> HumanReadable.human_readable_exercise_description("I", all_exercise_category_names_by_id)
 
     conn
     |> assign(:date, date)
