@@ -1,4 +1,9 @@
-<div class="level is-mobile p-3 mb-3">
+<%= if @current_user  do %>
+    <%= OpenBookWeb.Markdowns.InnerBar.inner_bar(%{active_tab: "friends"})  %>
+    <div class="pb-2"></div>
+<% end %>
+
+<div class="level is-mobile p-3 mb-0 pb-0">
     <div class="level-left">
     </div>
 
@@ -12,70 +17,41 @@
     </div>
 </div>
 
-<div class="daily-entry ml-5 mr-5">
-    <div class="title is-4 has-text-centered is-capitalized">
-        <% # TODO(Arie): timezone-support %>
-        <%= OpenBook.DateHelpers.readable_date(DateTime.now!("America/Los_Angeles"), @date, :human_relative_lingo) %>
-    </div>
-
-    <div class="level is-mobile pb-0 mb-2">
-        <div class="level-left">
-        <div class="level-item">
-            <span class="has-text-weight-semibold">
-            Nutrition
-            </span>
-        </div>
+<div class="p-5">
+    <div class="mb-4 pb-5 daily-entry">
+        <div class="is-capitalized is-size-4 has-text-centered pb-4 has-text-weight-bold">
+            <% # TODO(Arie): timezone-support %>
+            <%= OpenBook.DateHelpers.readable_date(DateTime.now!("America/Los_Angeles"), @date, :human_relative_lingo) %>
         </div>
 
-        <div class="level-item ml-3" style="border-bottom: 1px #2f364d solid;"></div>
-
-        <div class="level-right has_text_dark_blue">
-        <span class="icon">
-            <i class="fas fa-utensils"></i>
-        </span>
-        </div>
-    </div>
-
-    <p class="pt-0 pb-2">
-        <div class="pb-4" style="line-height: 20px;">
-            <%= @shared_readable_calorie_description %>
-        </div>
-    </p>
-
-    <div class="level is-mobile pt-5 pb-0">
-        <div class="level-left">
-        <div class="level-item">
-        <span class="has-text-weight-semibold">
-            Exercise
-            </span>
-        </div>
+        <div class="level is-mobile pb-0 mb-0">
+            <div class="level-left">
+            <div class="level-item mr-2">
+                <span class="icon">
+                <i class="fas fa-utensils"></i>
+                </span>
+            </div>
+            <div class="level-item">
+                <span style="max-width: 250px; line-height: 20px;">
+                <%= @shared_readable_calorie_description %>
+                </span>
+            </div>
+            </div>
         </div>
 
-        <div class="level-item ml-3" style="border-bottom: 1px #2f364d solid;"></div>
-
-        <div class="level-right">
-        <span class="icon">
-            <i class="fas fa-dumbbell"></i>
-        </span>
-        </div>
-    </div>
-
-    <div class="pt-0 pb-2">
-        <div class="pb-4" style="line-height: 20px;">
-            <%= @shared_readable_exercise_description %>
+        <div class="level is-mobile pb-0 mb-0 mt-4">
+            <div class="level-left">
+            <div class="level-item mr-2">
+                <span class="icon">
+                <i class="fas fa-dumbbell"></i>
+                </span>
+            </div>
+            <div class="level-item">
+                <span style="max-width: 250px; line-height: 20px;">
+                <%= @shared_readable_exercise_description %>
+                </span>
+            </div>
+            </div>
         </div>
     </div>
 </div>
-
-<%= if @current_user  do %>
-    <div class="new_entry_footer">
-        <div class="buttons is-right pb-4 pr-4">
-            <%= link(to: "/home", class: "button is-light has_border_grey has_text_dark_blue b-0") do %>
-            <span class="icon">
-                <i class="fas fa-book"></i>
-            </span>
-            <span>My OpenBook</span>
-            <% end %>
-        </div>
-    </div>
-<% end %>
