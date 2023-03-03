@@ -5,7 +5,6 @@ defmodule OpenBookWeb.Markdowns.InnerBar do
 
   alias OpenBookWeb.BookLive
   alias OpenBookWeb.ChallengesLive
-  alias OpenBookWeb.FriendsLive
   alias OpenBookWeb.ViewUtils
   alias OpenBookWeb.WriteLive
 
@@ -19,7 +18,7 @@ defmodule OpenBookWeb.Markdowns.InnerBar do
       >
         <button
           class={ViewUtils.class_list(
-              "button is_quarter_width has-text-grey b-0 m-0 pt-0 mt-0",
+              "button is_third_width has-text-grey b-0 m-0 pt-0 mt-0",
               %{"has_text_purple" => @active_tab == "challenges", "has-text-grey" => @active_tab != "challenges"}
             )
           }
@@ -37,7 +36,7 @@ defmodule OpenBookWeb.Markdowns.InnerBar do
 
         <button
           class={ViewUtils.class_list(
-              "button is_quarter_width has-text-grey b-0 m-0 pt-0 mt-0",
+              "button is_third_width has-text-grey b-0 m-0 pt-0 mt-0",
               %{"has_text_purple" => @active_tab == "book", "has-text-grey" => @active_tab != "book"}
             )
           }
@@ -55,7 +54,7 @@ defmodule OpenBookWeb.Markdowns.InnerBar do
 
         <button
           class={ViewUtils.class_list(
-              "button is_quarter_width has-text-grey b-0 m-0 pt-0 mt-0",
+              "button is_third_width has-text-grey b-0 m-0 pt-0 mt-0",
               %{"has_text_purple" => @active_tab == "write", "has-text-grey" => @active_tab != "write"}
             )
           }
@@ -68,24 +67,6 @@ defmodule OpenBookWeb.Markdowns.InnerBar do
 
           <div class="is_size_8" style="position: absolute; bottom: 10px;">
             Write
-          </div>
-        </button>
-
-        <button
-          class={ViewUtils.class_list(
-              "button is_quarter_width has-text-grey b-0 m-0 pt-0 mt-0",
-              %{"has_text_purple" => @active_tab == "friends", "has-text-grey" => @active_tab != "friends"}
-            )
-          }
-          style="height: 55px;"
-          phx-click={JS.navigate(Routes.live_path(OpenBookWeb.Endpoint, FriendsLive))}
-        >
-          <div style="position: absolute; top: 8px;">
-            <i class="fas fa-user-friends"></i>
-          </div>
-
-          <div class="is_size_8" style="position: absolute; bottom: 10px;">
-            Friends
           </div>
         </button>
 
