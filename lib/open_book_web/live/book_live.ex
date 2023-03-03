@@ -55,6 +55,45 @@ defmodule OpenBookWeb.BookLive do
     {:noreply, socket}
   end
 
+  # <%= for summary <- day.friend_nutrition_summaries do %>
+  # <div class="level is-mobile pl-2 pb-0 mb-0">
+  #   <div class="level-left">
+  #     <div class="level-item mr-1">
+  #       <span class="icon">
+  #         <i class="far fa-user-circle"></i>
+  #       </span>
+  #     </div>
+  #     <div class="level-item">
+  #       <span style="max-width: 250px; line-height: 20px;">
+  #         <%= summary %>
+  #       </span>
+  #     </div>
+  #   </div>
+  # </div>
+  # <% end %>
+
+#   <div class="pt-0 pb-2">
+#   <div class="pb-4" style="line-height: 20px;">
+#     <%= day.my_exercise_summary %>
+#   </div>
+#   <%= for summary <- day.friend_exercise_summaries do %>
+#   <div class="level is-mobile pl-2 pb-0 mb-2">
+#     <div class="level-left">
+#       <div class="level-item mr-2">
+#         <span class="icon">
+#           <i class="far fa-user-circle"></i>
+#         </span>
+#       </div>
+#       <div class="level-item">
+#         <span style="max-width: 250px; line-height: 20px;">
+#           <%= summary %>
+#         </span>
+#       </div>
+#     </div>
+#   </div>
+#   <% end %>
+# </div>
+
   def handle_event(
         "deactivate_share_day_modal",
         params,
@@ -120,95 +159,47 @@ defmodule OpenBookWeb.BookLive do
           <%= DateHelpers.readable_date(DateTime.now!("America/Los_Angeles"), day.date, :human_relative_lingo) %>
         </div>
 
-        <div class="level is-mobile pb-0 mb-2">
+        <div class="level is-mobile pb-0 mb-0">
           <div class="level-left">
-            <div class="level-item">
-              <span class="has-text-weight-semibold">
-                Nutrition
+            <div class="level-item mr-2">
+              <span class="icon">
+                <i class="fas fa-utensils"></i>
               </span>
             </div>
-          </div>
-
-          <div class="level-item ml-3" style="border-bottom: 1px #2f364d solid;"></div>
-
-          <div class="level-right has_text_dark_blue">
-            <span class="icon">
-              <i class="fas fa-utensils"></i>
-            </span>
+            <div class="level-item">
+              <span style="max-width: 250px; line-height: 20px;">
+                <%= day.my_nutrition_summary %>
+              </span>
+            </div>
           </div>
         </div>
 
-        <p class="pt-0 pb-2">
-          <div class="pb-4" style="line-height: 20px;">
-            <%= day.my_nutrition_summary %>
-          </div>
-          <%= for summary <- day.friend_nutrition_summaries do %>
-          <div class="level is-mobile pl-2 pb-0 mb-0">
-            <div class="level-left">
-              <div class="level-item mr-1">
-                <span class="icon">
-                  <i class="far fa-user-circle"></i>
-                </span>
-              </div>
-              <div class="level-item">
-                <span style="max-width: 250px; line-height: 20px;">
-                  <%= summary %>
-                </span>
-              </div>
-            </div>
-          </div>
-          <% end %>
-        </p>
-
-        <div class="level is-mobile pt-5 pb-0">
+        <div class="level is-mobile pb-0 mb-0 mt-4">
           <div class="level-left">
-            <div class="level-item">
-            <span class="has-text-weight-semibold">
-                Exercise
-              </span>
-            </div>
-          </div>
-
-          <div class="level-item ml-3" style="border-bottom: 1px #2f364d solid;"></div>
-
-          <div class="level-right">
-            <span class="icon">
+            <div class="level-item mr-2">
+              <span class="icon">
               <i class="fas fa-dumbbell"></i>
-            </span>
-          </div>
-        </div>
-        <div class="pt-0 pb-2">
-          <div class="pb-4" style="line-height: 20px;">
-            <%= day.my_exercise_summary %>
-          </div>
-          <%= for summary <- day.friend_exercise_summaries do %>
-          <div class="level is-mobile pl-2 pb-0 mb-2">
-            <div class="level-left">
-              <div class="level-item mr-2">
-                <span class="icon">
-                  <i class="far fa-user-circle"></i>
-                </span>
-              </div>
-              <div class="level-item">
-                <span style="max-width: 250px; line-height: 20px;">
-                  <%= summary %>
-                </span>
-              </div>
+              </span>
+            </div>
+            <div class="level-item">
+              <span style="max-width: 250px; line-height: 20px;">
+                <%= day.my_exercise_summary %>
+              </span>
             </div>
           </div>
-          <% end %>
         </div>
-        <div class="buttons has-addons is-right">
+
+        <div class="buttons has-addons is-right mt-4">
           <button
-            class="button is-small is-dark is-rounded b-0 aligned-right"
+            class="button is-small is-rounded b-0 aligned-right"
             phx-click="activate_share_day_modal"
             phx-value-date={day.date}
           >
-            <span class="icon">
-              <i class="fas fa-share-alt"></i>
+            <span class="icon mr-1">
+              <i class="fas fa-external-link-alt"></i>
             </span>
-            <span>
-              share
+            <span class="is-size-7">
+              share day
             </span>
           </button>
         </div>
