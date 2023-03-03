@@ -447,7 +447,7 @@ defmodule OpenBookWeb.WriteLive do
 
   defp calorie_selection(assigns) do
     ~H"""
-    <p class="pt-0 pb-4">
+    <p class="pt-0 pb-4 has-text-centered">
       Approximately how many calories?
     </p>
     <div class="is-flex is-flex-direction-row is-flex-wrap-wrap	">
@@ -477,12 +477,12 @@ defmodule OpenBookWeb.WriteLive do
 
   defp intensity_selection(assigns) do
     ~H"""
-    <p class="pt-0 pb-4">
+    <p class="pt-0 pb-4 has-text-centered">
       How hard did you go?
     </p>
     <div class="is-flex is-flex-direction-row is-flex-wrap-wrap	">
     <%= for intensity_level <- Fitness.intensity_levels do %>
-      <div class="tile p-1">
+      <div class="flex-basis-full pb-2">
         <button
           class="button is-small small-button-medium-height is-fullwidth is-white is-rounded has_border_grey"
           style="border-radius: 5px"
@@ -511,7 +511,7 @@ defmodule OpenBookWeb.WriteLive do
     ~H"""
     <%= case @measurement_kind do %>
     <% :repetitions -> %>
-      <p class="pt-0 pb-4">
+      <p class="pt-0 pb-4 has-text-centered">
         How many?
       </p>
       <div class="is-flex is-flex-wrap-wrap">
@@ -538,7 +538,7 @@ defmodule OpenBookWeb.WriteLive do
       </div>
 
     <% :minutes -> %>
-      <p class="pt-0 pb-4">
+      <p class="pt-0 pb-4 has-text-centered">
         For how long?
       </p>
       <div class="is-flex is-flex-wrap-wrap	">
