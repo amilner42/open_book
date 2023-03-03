@@ -33,33 +33,33 @@ defmodule OpenBook.HumanReadable do
 
   ## Examples:
 
-    iex> OpenBook.HumanReadable.human_readable_calorie_description("I", nil)
+    iex> OpenBook.HumanReadable.human_readable_calorie_description(nil, "I")
     "I did not record any nutrition."
 
-    iex> OpenBook.HumanReadable.human_readable_calorie_description("Charlie", 0)
+    iex> OpenBook.HumanReadable.human_readable_calorie_description(0, "Charlie")
     "Charlie did not record any nutrition."
 
-    iex> OpenBook.HumanReadable.human_readable_calorie_description("Banafsheh", 500)
+    iex> OpenBook.HumanReadable.human_readable_calorie_description(500, "Banafsheh")
     "Banafsheh had around 500 calories."
   """
-  def human_readable_calorie_description(who, nil), do: "#{who} did not record any nutrition."
-  def human_readable_calorie_description(who, 0), do: "#{who} did not record any nutrition."
-  def human_readable_calorie_description(who, calorie_estimate), do: "#{who} had around #{calorie_estimate} calories."
+  def human_readable_calorie_description(nil, who), do: "#{who} did not record any nutrition."
+  def human_readable_calorie_description(0, who), do: "#{who} did not record any nutrition."
+  def human_readable_calorie_description(calorie_estimate, who), do: "#{who} had around #{calorie_estimate} calories."
 
   @doc ~S"""
   Create a human-readable description of the given exercises.
 
   TODO(Arie): doctest
   """
-  def human_readable_exercise_description(who, nil, _all_exercise_category_names_by_id), do: "#{who} did not exercise."
+  def human_readable_exercise_description(nil, who, _all_exercise_category_names_by_id), do: "#{who} did not exercise."
 
   def human_readable_exercise_description(
-        who,
         measurement_by_exercise_category_id_and_intensity_tuple,
+        who,
         all_exercise_category_names_by_id
       ) do
     if(measurement_by_exercise_category_id_and_intensity_tuple == %{}) do
-      human_readable_exercise_description(who, nil, all_exercise_category_names_by_id)
+      human_readable_exercise_description(nil, who, all_exercise_category_names_by_id)
     else
       readable_exercise_segments =
         Enum.map(measurement_by_exercise_category_id_and_intensity_tuple, fn {{exercise_category_id, intensity_level},

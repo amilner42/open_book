@@ -44,7 +44,6 @@ defmodule OpenBookWeb.Router do
 
     live("/book", BookLive)
     live("/challenges", ChallengesLive)
-    live("/friends", FriendsLive)
     live("/write", WriteLive)
 
     # Session Routes
