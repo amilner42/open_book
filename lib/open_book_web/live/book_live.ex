@@ -13,6 +13,8 @@ defmodule OpenBookWeb.BookLive do
   alias OpenBook.LittleLogger, as: LL
 
   alias OpenBookWeb.Markdowns.InnerBar
+  alias OpenBookWeb.Markdowns.DescriptionRows
+
   alias OpenBookWeb.ViewUtils
 
   def mount_live(_params, %{"user_id" => user_id}, socket) do
@@ -123,8 +125,13 @@ defmodule OpenBookWeb.BookLive do
           <%= DateHelpers.readable_date(DateTime.now!("America/Los_Angeles"), day.date, :human_relative_lingo) %>
         </div>
 
-        <.calorie_description_row maybe_readable_calorie_description={day.maybe_readable_calorie_description} />
-        <.exercise_description_row maybe_readable_exercise_description={day.maybe_readable_exercise_description} />
+        <DescriptionRows.nutrition_description_row
+          maybe_readable_calorie_description={day.maybe_readable_calorie_description}
+        />
+
+        <DescriptionRows.exercise_description_row
+          maybe_readable_exercise_description={day.maybe_readable_exercise_description}
+        />
 
         <div class="buttons has-addons is-right mt-4">
           <button
@@ -226,55 +233,5 @@ defmodule OpenBookWeb.BookLive do
       end
     end)
     |> Enum.reverse()
-  end
-
-  ## Markdowns
-
-  defp calorie_description_row(assigns = %{maybe_readable_calorie_description: nil}) do
-    ~H"""
-    """
-  end
-
-  defp calorie_description_row(assigns) do
-    ~H"""
-    <div class="level is-mobile pb-0 mb-0">
-      <div class="level-left">
-        <div class="level-item mr-2">
-          <span class="icon">
-            <i class="fas fa-utensils"></i>
-          </span>
-        </div>
-        <div class="level-item">
-          <span style="max-width: 250px; line-height: 20px;">
-            <%= @maybe_readable_calorie_description %>
-          </span>
-        </div>
-      </div>
-    </div>
-    """
-  end
-
-  defp exercise_description_row(assigns = %{maybe_readable_exercise_description: nil}) do
-    ~H"""
-    """
-  end
-
-  defp exercise_description_row(assigns) do
-    ~H"""
-    <div class="level is-mobile pb-0 mb-0 mt-4">
-      <div class="level-left">
-        <div class="level-item mr-2">
-          <span class="icon">
-          <i class="fas fa-dumbbell"></i>
-          </span>
-        </div>
-        <div class="level-item">
-          <span style="max-width: 250px; line-height: 20px;">
-            <%= @maybe_readable_exercise_description %>
-          </span>
-        </div>
-      </div>
-    </div>
-    """
   end
 end
