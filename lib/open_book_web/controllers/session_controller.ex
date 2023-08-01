@@ -5,8 +5,6 @@ defmodule OpenBookWeb.SessionController do
   alias OpenBook.LittleLogger, as: LL
   alias OpenBook.Plugs.Auth
 
-  alias OpenBookWeb.HomeLive
-
   def login_through_url_with_verification_code(conn, %{"code" => code}) do
     LL.info_event("login_with_code", %{code: code})
 
@@ -16,18 +14,18 @@ defmodule OpenBookWeb.SessionController do
 
         conn
         |> Phoenix.Controller.put_flash(:error, "Invalid authentication code.")
-        |> redirect(to: Routes.page_path(conn, :index))
+        |> redirect(to: ~p"/")
 
       user ->
         LL.info_event("login_from_code_success", %{user_id: user.id})
 
         conn
         |> Auth.login(user)
-        |> redirect(to: Routes.live_path(conn, HomeLive))
+        |> redirect(to: ~p"/home")
     end
   end
 
   def delete(conn, _) do
-    Auth.logout(conn, and_redirect_to_home_page: true)
+    Auth.logout(conn, %{redirect_to: ~p"/"})
   end
 end

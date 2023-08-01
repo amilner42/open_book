@@ -13,9 +13,12 @@ config :open_book,
 # Configures the endpoint
 config :open_book, OpenBookWeb.Endpoint,
   url: [host: "localhost"],
-  render_errors: [view: OpenBookWeb.ErrorView, accepts: ~w(html json), layout: false],
+  render_errors: [
+    formats: [html: OpenBookWeb.ErrorHTML, json: OpenBookWeb.ErrorJSON],
+    layout: false
+  ],
   pubsub_server: OpenBook.PubSub,
-  live_view: [signing_salt: "t4Br21Mj"]
+  live_view: [signing_salt: "ImNdtCXh"]
 
 # Configures the mailer
 #
@@ -26,17 +29,26 @@ config :open_book, OpenBookWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :open_book, OpenBook.Mailer, adapter: Swoosh.Adapters.Local
 
-# Swoosh API client is needed for adapters other than SMTP.
-config :swoosh, :api_client, false
-
 # Configure esbuild (the version is required)
 config :esbuild,
-  version: "0.14.29",
+  version: "0.17.11",
   default: [
     args:
       ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
     cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
+  ]
+
+# Configure tailwind (the version is required)
+config :tailwind,
+  version: "3.2.7",
+  default: [
+    args: ~w(
+      --config=tailwind.config.js
+      --input=css/app.css
+      --output=../priv/static/assets/app.css
+    ),
+    cd: Path.expand("../assets", __DIR__)
   ]
 
 # Configures Elixir's Logger

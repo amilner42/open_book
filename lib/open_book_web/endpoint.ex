@@ -7,9 +7,8 @@ defmodule OpenBookWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_open_book_key",
-    signing_salt: "rGB+RZSV",
-    # Keep users logged in for 1 year.
-    max_age: 60 * 60 * 24 * 365
+    signing_salt: "ay/+4viY",
+    same_site: "Lax"
   ]
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
@@ -22,7 +21,7 @@ defmodule OpenBookWeb.Endpoint do
     at: "/",
     from: :open_book,
     gzip: false,
-    only: ~w(assets fonts images favicon.ico robots.txt)
+    only: OpenBookWeb.static_paths()
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.

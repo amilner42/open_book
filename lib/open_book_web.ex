@@ -1,116 +1,29 @@
 defmodule OpenBookWeb do
   @moduledoc """
   The entrypoint for defining your web interface, such
-  as controllers, views, channels and so on.
+  as controllers, components, channels, and so on.
 
   This can be used in your application as:
 
       use OpenBookWeb, :controller
-      use OpenBookWeb, :view
+      use OpenBookWeb, :html
 
-  The definitions below will be executed for every view,
-  controller, etc, so keep them short and clean, focused
+  The definitions below will be executed for every controller,
+  component, etc, so keep them short and clean, focused
   on imports, uses and aliases.
 
   Do NOT define functions inside the quoted expressions
-  below. Instead, define any helper function in modules
-  and import those modules here.
+  below. Instead, define additional modules and import
+  those modules here.
   """
 
-  def controller do
-    quote do
-      use Phoenix.Controller, namespace: OpenBookWeb
-
-      import Plug.Conn
-      import OpenBookWeb.Gettext
-      alias OpenBookWeb.Router.Helpers, as: Routes
-    end
-  end
-
-  def view do
-    quote do
-      use Phoenix.View,
-        root: "lib/open_book_web/templates",
-        namespace: OpenBookWeb
-
-      # Import convenience functions from controllers
-      import Phoenix.Controller,
-        only: [get_flash: 1, get_flash: 2, view_module: 1, view_template: 1]
-
-      # Include shared imports and aliases for views
-      unquote(view_helpers())
-    end
-  end
-
-  def live_view do
-    quote do
-      use Phoenix.LiveView,
-        layout: {OpenBookWeb.LayoutView, "live.html"}
-
-      unquote(view_helpers())
-    end
-  end
-
-  # Me editing phoenix to add some boilerplate around mounting / handle_params getting called twice on page load:
-  #  - on page-load (no websocket)
-  #  - on websocket connection
-  def live_view_connected do
-    quote do
-      unquote(live_view())
-
-      def mount(params, session, socket) do
-        if(Phoenix.LiveView.connected?(socket)) do
-          {:ok, socket} = mount_live(params, session, socket)
-          socket = assign(socket, :page_loading, false)
-
-          {:ok, socket}
-        else
-          mount_dead(params, session, socket)
-        end
-      end
-
-      def mount_dead(_params, _session, socket) do
-        socket =
-          socket
-          |> assign(:page_loading, true)
-
-        {:ok, socket}
-      end
-
-      def handle_params(params, url, socket) do
-        if(Phoenix.LiveView.connected?(socket)) do
-          handle_params_live(params, url, socket)
-        else
-          handle_params_dead(params, url, socket)
-        end
-      end
-
-      def handle_params_dead(_params, _url, socket) do
-        {:noreply, socket}
-      end
-    end
-  end
-
-  def live_component do
-    quote do
-      use Phoenix.LiveComponent
-
-      unquote(view_helpers())
-    end
-  end
-
-  def component do
-    quote do
-      use Phoenix.Component
-
-      unquote(view_helpers())
-    end
-  end
+  def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
 
   def router do
     quote do
-      use Phoenix.Router
+      use Phoenix.Router, helpers: false
 
+      # Import common connection and controller functions to use in pipelines
       import Plug.Conn
       import Phoenix.Controller
       import Phoenix.LiveView.Router
@@ -120,24 +33,74 @@ defmodule OpenBookWeb do
   def channel do
     quote do
       use Phoenix.Channel
-      import OpenBookWeb.Gettext
     end
   end
 
-  defp view_helpers do
+  def controller do
     quote do
-      # Use all HTML functionality (forms, tags, etc)
-      use Phoenix.HTML
+      use Phoenix.Controller,
+        formats: [:html, :json],
+        layouts: [html: OpenBookWeb.Layouts]
 
-      # Import LiveView and .heex helpers (live_render, live_patch, <.form>, etc)
-      import Phoenix.Component
-
-      # Import basic rendering functionality (render, render_layout, etc)
-      import Phoenix.View
-
-      import OpenBookWeb.ErrorHelpers
+      import Plug.Conn
       import OpenBookWeb.Gettext
-      alias OpenBookWeb.Router.Helpers, as: Routes
+
+      unquote(verified_routes())
+    end
+  end
+
+  def live_view do
+    quote do
+      use Phoenix.LiveView,
+        layout: {OpenBookWeb.Layouts, :app}
+
+      unquote(html_helpers())
+    end
+  end
+
+  def live_component do
+    quote do
+      use Phoenix.LiveComponent
+
+      unquote(html_helpers())
+    end
+  end
+
+  def html do
+    quote do
+      use Phoenix.Component
+
+      # Import convenience functions from controllers
+      import Phoenix.Controller,
+        only: [get_csrf_token: 0, view_module: 1, view_template: 1]
+
+      # Include general helpers for rendering HTML
+      unquote(html_helpers())
+    end
+  end
+
+  defp html_helpers do
+    quote do
+      # HTML escaping functionality
+      import Phoenix.HTML
+      # Core UI components and translation
+      import OpenBookWeb.CoreComponents
+      import OpenBookWeb.Gettext
+
+      # Shortcut for generating JS commands
+      alias Phoenix.LiveView.JS
+
+      # Routes generation with the ~p sigil
+      unquote(verified_routes())
+    end
+  end
+
+  def verified_routes do
+    quote do
+      use Phoenix.VerifiedRoutes,
+        endpoint: OpenBookWeb.Endpoint,
+        router: OpenBookWeb.Router,
+        statics: OpenBookWeb.static_paths()
     end
   end
 

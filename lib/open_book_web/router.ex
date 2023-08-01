@@ -9,35 +9,44 @@ defmodule OpenBookWeb.Router do
     ]
 
   pipeline :browser do
-    plug(:accepts, ["html"])
-    plug(:fetch_session)
-    plug(:fetch_live_flash)
-    plug(:put_root_layout, {OpenBookWeb.LayoutView, :root})
-    plug(:protect_from_forgery)
-    plug(:put_secure_browser_headers)
-    plug(:get_current_user_from_session)
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :put_root_layout, {OpenBookWeb.Layouts, :root}
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+    plug :get_current_user_from_session
+  end
+
+  pipeline :browser_logged_in_user do
+    plug :browser
+    plug :authenticate_user, %{redirect_to: "/"}
+  end
+
+  pipeline :browser_logged_out_user do
+    plug :browser
+    plug :redirect_if_logged_in, %{redirect_to: "/home"}
   end
 
   pipeline :api do
-    plug(:accepts, ["json"])
+    plug :accepts, ["json"]
   end
 
   # Logged-out-only routes. Will redirect if logged in.
   scope "/", OpenBookWeb do
-    pipe_through([:browser, :redirect_if_logged_in])
+    pipe_through :browser_logged_out_user
 
-    get("/", PageController, :index)
-    get("/login/:code", SessionController, :login_through_url_with_verification_code)
+    get "/", PageController, :home
+    get "/login/:code", SessionController, :login_through_url_with_verification_code
   end
 
   # Logged-in-only routes. Will redirect if logged out.
   scope "/", OpenBookWeb do
-    pipe_through([:browser, :authenticate_user])
+    pipe_through :browser_logged_in_user
 
-    live("/home", HomeLive)
+    live "/home", HomeLive
 
-    # Session Routes
-    get("/logout", SessionController, :delete)
+    get "/logout", SessionController, :delete
   end
 
   # Other scopes may use custom stacks.
@@ -45,32 +54,20 @@ defmodule OpenBookWeb.Router do
   #   pipe_through :api
   # end
 
-  # Enables LiveDashboard only for development
-  #
-  # If you want to use the LiveDashboard in production, you should put
-  # it behind authentication and allow only admins to access it.
-  # If your application does not have an admins-only section yet,
-  # you can use Plug.BasicAuth to set up some basic authentication
-  # as long as you are also using SSL (which you should anyway).
-  if Mix.env() in [:dev, :test] do
+  # Enable LiveDashboard and Swoosh mailbox preview in development
+  if Application.compile_env(:open_book, :dev_routes) do
+    # If you want to use the LiveDashboard in production, you should put
+    # it behind authentication and allow only admins to access it.
+    # If your application does not have an admins-only section yet,
+    # you can use Plug.BasicAuth to set up some basic authentication
+    # as long as you are also using SSL (which you should anyway).
     import Phoenix.LiveDashboard.Router
 
-    scope "/" do
-      pipe_through(:browser)
-
-      live_dashboard("/dashboard", metrics: OpenBookWeb.Telemetry)
-    end
-  end
-
-  # Enables the Swoosh mailbox preview in development.
-  #
-  # Note that preview only shows emails that were sent by the same
-  # node running the Phoenix server.
-  if Mix.env() == :dev do
     scope "/dev" do
-      pipe_through(:browser)
+      pipe_through :browser
 
-      forward("/mailbox", Plug.Swoosh.MailboxPreview)
+      live_dashboard "/dashboard", metrics: OpenBookWeb.Telemetry
+      forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
   end
 end

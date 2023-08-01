@@ -19,15 +19,15 @@ defmodule OpenBookWeb.ConnCase do
 
   using do
     quote do
+      # The default endpoint for testing
+      @endpoint OpenBookWeb.Endpoint
+
+      use OpenBookWeb, :verified_routes
+
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
       import OpenBookWeb.ConnCase
-
-      alias OpenBookWeb.Router.Helpers, as: Routes
-
-      # The default endpoint for testing
-      @endpoint OpenBookWeb.Endpoint
     end
   end
 

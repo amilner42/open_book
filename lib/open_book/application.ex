@@ -8,12 +8,14 @@ defmodule OpenBook.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Start the Ecto repository
-      OpenBook.Repo,
       # Start the Telemetry supervisor
       OpenBookWeb.Telemetry,
+      # Start the Ecto repository
+      OpenBook.Repo,
       # Start the PubSub system
       {Phoenix.PubSub, name: OpenBook.PubSub},
+      # Start Finch
+      {Finch, name: OpenBook.Finch},
       # Start the Endpoint (http/https)
       OpenBookWeb.Endpoint
       # Start a worker by calling: OpenBook.Worker.start_link(arg)
