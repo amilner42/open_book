@@ -1,6 +1,6 @@
 # openbook.health
 
-Stay fit with friends. It's your story. And it's personal.
+Complete health challenges with friends.
 
 ### Project Status
 

@@ -22,14 +22,6 @@ defmodule OpenBookWeb.Router do
     plug(:accepts, ["json"])
   end
 
-  # Login-irrelevant-routes.
-  scope "/", OpenBookWeb do
-    pipe_through([:browser])
-
-    # Avoid live-view for shares so it can be unfurled nicely in chats + load as fast as possibl
-    get("/share/day/:code", ShareController, :share_day_stats)
-  end
-
   # Logged-out-only routes. Will redirect if logged in.
   scope "/", OpenBookWeb do
     pipe_through([:browser, :redirect_if_logged_in])
@@ -42,10 +34,7 @@ defmodule OpenBookWeb.Router do
   scope "/", OpenBookWeb do
     pipe_through([:browser, :authenticate_user])
 
-    live("/book", BookLive)
-    live("/challenges", ChallengesLive)
-    live("/friends", FriendsLive)
-    live("/write", WriteLive)
+    live("/home", HomeLive)
 
     # Session Routes
     get("/logout", SessionController, :delete)
